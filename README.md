@@ -163,7 +163,7 @@ Build Loop's **Observability** view: one row per stage skill run, AI PM review r
 research call, plus a "POC started" row. Each row has the inputs, 3–6 lines of reasoning, the output and its decisions,
 the verdict for reviews, timing, and tokens (measured for AI PM reviews, estimated elsewhere, never empty). Every
 re-run (after an AI PM REVISE or your change request) gets its own row, and a review is never logged ahead of the run
-it checked. Rows are kept in a local ledger (`.poc-studio/skill-runs/`): one that fails to save is sent again at the
+it checked. Rows are kept in a local ledger (`.poc-studio-uat/skill-runs/`): one that fails to save is sent again at the
 next step, the log is checked against Orbit at every gate and at the end, and the run ends with one line saying every
 run was saved (or which were not). Logging never blocks a run.
 
@@ -207,7 +207,7 @@ one line, or asks you up to three short questions when they are vague, before an
 feedback becomes a lesson it checks on every later POC (`python3 <ai-pm>/scripts/lessons.py stats` shows first-try
 approvals per stage). Questions raised during a stage — including
 UnifyApps Headless's (e.g. which model to use) — go to the reviewer, not to you; a hook enforces this while a stage runs.
-Two exceptions in Stage 4 come to you: during the **Zen planning window** (while `.poc-studio/zen-planning` exists)
+Two exceptions in Stage 4 come to you: during the **Zen planning window** (while `.poc-studio-uat/zen-planning` exists)
 you answer Zen's clarification questions (each one first reviewed by platform-master, which may add its own option,
 marked "Platform-master: …") and approve its plan, and every `CONFIRM_REQUIRED (d_…)` (deletes and some
 releases) is yours to answer. The hooks let both through, and the POC owner is nudged in Slack while they wait.

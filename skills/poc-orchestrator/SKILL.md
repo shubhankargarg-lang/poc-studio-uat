@@ -180,7 +180,7 @@ with `/ua:plan` in Zen, in both run modes; this skill calls that step "Zen plann
   without asking the person. Everything else is unchanged: the same stages, reviews, REVISE rounds, rulings, files,
   Orbit writes and checks.
 
-**Sonic flag.** In Sonic, create `${CLAUDE_PROJECT_DIR:-<cwd at setup>}/.poc-studio/sonic` (holding the workspace path)
+**Sonic flag.** In Sonic, create `${CLAUDE_PROJECT_DIR:-<cwd at setup>}/.poc-studio-uat/sonic` (holding the workspace path)
 at setup or resume, record its absolute path in `state.json` → `"sonic_flag"`, and delete it when the run finishes or
 stops. In Zen, delete a leftover `sonic` flag (from an interrupted Sonic run) at setup or resume. The hooks read it. The autopilot file stays on across stages in Sonic; it is removed only for the person's
 items below, and recreated right after.
@@ -230,7 +230,7 @@ The stage skills are built not to ask questions. If any stage — or UnifyApps H
    check, asked in one AskUserQuestion call) with the reviewer's
    recommended option first.
 
-The plugin enforces this with two hooks: while the file `$CLAUDE_PROJECT_DIR/.poc-studio/autopilot` exists,
+The plugin enforces this with two hooks: while the file `$CLAUDE_PROJECT_DIR/.poc-studio-uat/autopilot` exists,
 AskUserQuestion is blocked and redirected to the reviewer, and ending the turn is blocked once with a reminder (so a
 plain-text question, e.g. from UnifyApps Headless, is routed too). Create that file when a stage starts running; delete it right before
 you put an approval gate or an `ASK_HUMAN` question to the person; recreate it when the stage work resumes.
@@ -239,7 +239,7 @@ Delete it when the run finishes or stops.
 Always use the absolute path (stages `cd` into subfolders, and the shell keeps that directory):
 
 ```bash
-F="${CLAUDE_PROJECT_DIR:-<cwd at setup>}/.poc-studio/autopilot"
+F="${CLAUDE_PROJECT_DIR:-<cwd at setup>}/.poc-studio-uat/autopilot"
 mkdir -p "$(dirname "$F")" && echo "<workspace>" > "$F"     # stage running
 rm -f "$F"                                                  # gate / ASK_HUMAN / sign-in / done
 ```
@@ -254,7 +254,7 @@ Gathering's `SAMPLE_UPLOAD:` question (real samples of the documents an AI featu
 **Two more exceptions, both in Stage 4 (and in any later fix to the app):**
 
 - **Zen planning window (Zen run mode only; in Sonic the AI PM answers, see Stage 4).** While `/ua:plan` plans the build in Zen mode, the autopilot file is removed and the Zen
-  planning flag `$CLAUDE_PROJECT_DIR/.poc-studio/zen-planning` exists (its absolute path in `state.json` →
+  planning flag `$CLAUDE_PROJECT_DIR/.poc-studio-uat/zen-planning` exists (its absolute path in `state.json` →
   `"zen_planning_flag"`). During that window Zen's clarification questions and its plan approval go to the person
   directly, never to the reviewer; the hooks let them through. Every question and answer is logged as a human
   decision in `context-log.md` and in `04-build/zen-decisions.md`. On the person's yes, delete the Zen planning flag
@@ -405,7 +405,7 @@ except at the start (the POC ID must be verified).
    POC ID, stop and ask the person whether this is the same POC (resume) or a new one (then use a new folder
    `<client-slug>/<usecase-slug>-<POC ID>/`).
    A `state.json` that holds only one-off runs (a `standalone` key and no `poc_id`) is not a pipeline run: start the
-   run in it and keep its `standalone` key as it is. Remove a leftover `.poc-studio/one-off` flag (from an interrupted
+   run in it and keep its `standalone` key as it is. Remove a leftover `.poc-studio-uat/one-off` flag (from an interrupted
    one-off run): while it exists the owner is not nudged in Slack.
    If the client folder already holds **other** use cases, mention them in one line and keep them untouched.
 2. **Connector check.** Look for each connector's tools with a tool search (`slack`, `gmail`, `drive`, `calendar`).
@@ -490,8 +490,8 @@ except at the start (the POC ID must be verified).
      The session (`~/.local/poc-studio/auth/orbit.json`) serves the Stage 4b build walk and the Stage 5 recording,
      so the rest of the run needs no sign-in unless it expires.
 6. **Observability log (orbit-writeback Moment 7).** Make `observability.run_group` (`"GRP-" + Date.now()`, new for
-   this session, also on resume) and write it into the run flag `.poc-studio/observability` (the hook needs it; delete
-   the flag when the run finishes or stops; the ledger beside it, `.poc-studio/skill-runs/`, stays). Record the flag's
+   this session, also on resume) and write it into the run flag `.poc-studio-uat/observability` (the hook needs it; delete
+   the flag when the run finishes or stops; the ledger beside it, `.poc-studio-uat/skill-runs/`, stays). Record the flag's
    folder as `state.json` → `observability.ledger` (absolute path; every `skill_run_row.py` call takes `--ledger` with
    it). Read the highest `sequence` already logged for this POC, then write the `poc-orchestrator` row ("POC started",
    or "POC resumed" on resume). On resume, also send any pending rows and run the check against Orbit. From here on, see "Observability log" below.
@@ -665,7 +665,7 @@ Only these session facts are supplied by you:
   - Right before `/ua:plan` starts, remove the autopilot file and create the Zen planning flag, next to it, holding
     the workspace path (record its absolute path in `state.json` as `"zen_planning_flag"`):
     ```bash
-    Z="${CLAUDE_PROJECT_DIR:-<cwd at setup>}/.poc-studio/zen-planning"
+    Z="${CLAUDE_PROJECT_DIR:-<cwd at setup>}/.poc-studio-uat/zen-planning"
     rm -f "<autopilot_flag>" && echo "<workspace>" > "$Z"   # Zen planning: the person answers
     ```
   - While it exists, Zen's clarification questions (AskUserQuestion, one decision each, with a recommended option,

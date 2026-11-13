@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# POC Studio observability (orbit-writeback Moment 7). While a run is active (<project>/.poc-studio/observability
+# POC Studio observability (orbit-writeback Moment 7). While a run is active (<project>/.poc-studio-uat/observability
 # exists, made by the orchestrator's Setup or a one-off run's start), note when each logged skill starts and remind
 # the session to write its one orbit_studio_skill_run row when it returns. Notify only: never blocks a tool, always
 # exits 0, writes nothing to Orbit itself.
-#   PreToolUse  Skill|Agent : save the start time in .poc-studio/skill-starts/<skill>
+#   PreToolUse  Skill|Agent : save the start time in .poc-studio-uat/skill-starts/<skill>
 #   PostToolUse Skill       : a stage skill was loaded and is starting: say so, with its start time
 #   PostToolUse Agent       : an ai-pm review returned: write its row now, with the measured usage
 {
   INPUT="$(cat)" || exit 0
   DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
-  [ -f "$DIR/.poc-studio/observability" ] || exit 0
+  [ -f "$DIR/.poc-studio-uat/observability" ] || exit 0
   command -v python3 >/dev/null 2>&1 || exit 0
   ROW="$(cd "$(dirname "$0")/.." 2>/dev/null && pwd)/skills/orbit-writeback/scripts/skill_run_row.py"
-  HOOK_INPUT="$INPUT" OBS_DIR="$DIR/.poc-studio" ROW_PY="$ROW" python3 - <<'PY'
+  HOOK_INPUT="$INPUT" OBS_DIR="$DIR/.poc-studio-uat" ROW_PY="$ROW" python3 - <<'PY'
 import json, os, subprocess, time
 try: h = json.loads(os.environ["HOOK_INPUT"])
 except Exception: raise SystemExit(0)
@@ -34,7 +34,7 @@ if ev == "PreToolUse":
     open(f, "w").write(str(int(time.time() * 1000))); raise SystemExit(0)
 start = open(f).read().strip() if os.path.exists(f) else str(int(time.time() * 1000))
 if tool == "Skill":
-    msg = (f"POC Studio observability: `{skill}` is starting (started_at {start}, saved in .poc-studio/skill-starts/{skill}). "
+    msg = (f"POC Studio observability: `{skill}` is starting (started_at {start}, saved in .poc-studio-uat/skill-starts/{skill}). "
            f"When this skill run returns, before the next step, write its one orbit_studio_skill_run row "
            f"(orbit-writeback Moment 7): build it with skill_run_row.py, then apply_record_edits.")
     if skill == "platform-master":

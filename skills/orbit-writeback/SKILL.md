@@ -619,16 +619,16 @@ observability:
   `tokens_in` ≈ characters of the instruction plus every file the skill read, ÷ 4; `tokens_out` ≈ characters of
   everything it wrote (files and messages), ÷ 4. Round to the nearest 100.
 - **The run flag and the hook.** At the start of a run (orchestrator Setup, or a one-off run's start) write
-  `${CLAUDE_PROJECT_DIR:-<cwd>}/.poc-studio/observability` (holding the `run_group`); delete it when the run ends or
+  `${CLAUDE_PROJECT_DIR:-<cwd>}/.poc-studio-uat/observability` (holding the `run_group`); delete it when the run ends or
   stops. While it exists, the plugin's `skill-run-log.sh` hook saves each logged skill's start time in
-  `.poc-studio/skill-starts/<skill>` and reminds the session, in the tool result, to write the row when the skill
+  `.poc-studio-uat/skill-starts/<skill>` and reminds the session, in the tool result, to write the row when the skill
   returns (for an AI PM review, right when its subagent returns). Use that start time as `started_at`. When an AI PM
   review returns, the hook also names any re-run that has no row yet and any rows still pending. The ledger
-  (`.poc-studio/skill-runs/`) stays when the flag is deleted: it is the record the report and the checks read.
+  (`.poc-studio-uat/skill-runs/`) stays when the flag is deleted: it is the record the report and the checks read.
 - **How to write it (always through the builder, never by hand).** The object validates every write against its
   schema, so one wrong type fails the row. Let `O` be this skill's `scripts/` folder
   (`find ~/.claude/plugins -path '*orbit-writeback/scripts/skill_run_row.py' -exec dirname {} \; | head -1`) and
-  `LG` the run's `.poc-studio` folder (the one holding the `observability` flag; its absolute path is in `state.json`
+  `LG` the run's `.poc-studio-uat` folder (the one holding the `observability` flag; its absolute path is in `state.json`
   → `observability.ledger`, or the one-off run's entry). Pass `--ledger "$LG"` to every builder call: the builder keeps
   every row in a local ledger there (`skill-runs/`), so no row is ever lost.
   1. Write the fields you have, as one JSON object, to `$TMPDIR/skill-run-in.json` with a short script (never retype

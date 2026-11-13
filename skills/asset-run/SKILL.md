@@ -28,7 +28,7 @@ once that file exists.
 Unlike the pipeline, a one-off run **asks for what it is missing before the stage starts.** Only once every required
 prerequisite is in hand does the autopilot flag go on and the stage run unattended.
 
-**First, the run flags** (absolute paths under `${CLAUDE_PROJECT_DIR:-<cwd>}/.poc-studio/`):
+**First, the run flags** (absolute paths under `${CLAUDE_PROJECT_DIR:-<cwd>}/.poc-studio-uat/`):
 - Create **`one-off`** (holding the asset name). While it exists, the nudge hook posts nothing to any POC's Slack thread
   (a one-off asset never posts to a POC). Remove it when the run ends — after § 6, or whenever the run stops.
 - A leftover **`autopilot`**, **`zen-planning`** or **`sonic`** flag would block or misroute the questions below. Read the workspace path in
@@ -163,7 +163,7 @@ once. Keep their email if the profile gives it. Save both in `state.json` → `s
 
 **Observability log.** When the command starts, make this run's `observability.run_group` (`"GRP-" + Date.now()`;
 a chain from "Approve and make <next asset>" keeps the same group and goes on counting `sequence`) and write it into
-the run flag `.poc-studio/observability` (removed with the `one-off` flag when the run ends). Then, right
+the run flag `.poc-studio-uat/observability` (removed with the `one-off` flag when the run ends). Then, right
 after each skill run returns (the stage skill and each re-run of it, each AI PM review round, each platform-master
 job, the build, each `research` call, each `connector-discovery` run), write its one row: orbit-writeback **Moment 7**, with `origin: one_off`,
 **no `poc` key** (even when a POC ID was given), `gate: none`, `triggered_by: command` (or `iteration` for a re-run

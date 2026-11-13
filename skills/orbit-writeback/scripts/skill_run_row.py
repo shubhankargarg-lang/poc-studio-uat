@@ -13,8 +13,8 @@ usage:
   skill_run_row.py --estimate <file or text>...         estimated tokens (characters / 4, rounded to 100)
 
 The local ledger (every run's row, so nothing is lost and reviews are never logged ahead of the run they checked).
-DIR is the run's .poc-studio folder (the folder holding the `observability` flag); when --ledger is not given it is
-$CLAUDE_PROJECT_DIR/.poc-studio, or the nearest .poc-studio folder above the current one.
+DIR is the run's .poc-studio-uat folder (the folder holding the `observability` flag); when --ledger is not given it is
+$CLAUDE_PROJECT_DIR/.poc-studio-uat, or the nearest .poc-studio-uat folder above the current one.
   skill_run_row.py note-change <skill> [--gate gN] [--ledger DIR]   the person asked for changes to this skill's output
   skill_run_row.py change-dropped <skill> [--ledger DIR]             the person dropped that change: no re-run is expected
   skill_run_row.py saved <run_id> <reply.json> [--ledger DIR]       check Orbit's reply; mark the row saved (exit 1: not saved)
@@ -199,11 +199,11 @@ def build(row):
 def ledger_dir(a):
     if "--ledger" in a: return a[a.index("--ledger") + 1]
     if os.environ.get("CLAUDE_PROJECT_DIR"):
-        d = os.path.join(os.environ["CLAUDE_PROJECT_DIR"], ".poc-studio")
+        d = os.path.join(os.environ["CLAUDE_PROJECT_DIR"], ".poc-studio-uat")
         if os.path.isdir(d): return d
     cur = os.getcwd()
     while True:
-        d = os.path.join(cur, ".poc-studio")
+        d = os.path.join(cur, ".poc-studio-uat")
         if os.path.isdir(d): return d
         if os.path.dirname(cur) == cur: return None
         cur = os.path.dirname(cur)
@@ -289,7 +289,7 @@ if __name__ == "__main__":
     if a[0] == "--estimate": print(estimate(a[1:])); sys.exit(0)
     if a[0] in ("note-change", "change-dropped", "saved", "pending", "rework-check", "reconcile", "report"):
         d = ledger_dir(a)
-        if not d: print("error: no .poc-studio folder found (pass --ledger <dir>)", file=sys.stderr); sys.exit(2)
+        if not d: print("error: no .poc-studio-uat folder found (pass --ledger <dir>)", file=sys.stderr); sys.exit(2)
         cmd, args = a[0], [x for i, x in enumerate(a[1:], 1) if x not in ("--ledger", "--gate", "--all") and a[i - 1] not in ("--ledger", "--gate")]
         rows = rows_state(d)
         if cmd == "note-change":
@@ -361,7 +361,7 @@ if __name__ == "__main__":
                    "reviews_run_id": props.get("reviews_run_id"), "run_group": props.get("run_group"), "poc": props.get("poc")})
         json.dump(payload, open(L(d, "rows", f"{props['run_id']}.json"), "w"), ensure_ascii=False, indent=1)
     else:
-        print("fixed: no .poc-studio folder found: the row is not in the local ledger (pass --ledger <dir>)", file=sys.stderr)
+        print("fixed: no .poc-studio-uat folder found: the row is not in the local ledger (pass --ledger <dir>)", file=sys.stderr)
     out = json.dumps(payload, ensure_ascii=False, indent=1)
     if "--out" in a: open(a[a.index("--out") + 1], "w").write(out + "\n"); print(props["run_id"])
     else: print(out)
