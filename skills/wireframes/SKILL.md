@@ -1,6 +1,6 @@
 ---
 name: wireframes
-description: Turns the approved scoping document (BRD) into low-fidelity wireframes that decide how each page works — who arrives, what they decide, what needs them and their one next step — and draws them as grey-box PNGs from a short JSON layout spec by a bundled script (no browser, no HTML), plus a component manifest, the closed list of components the design system then designs and the build then uses. Names the app's signature (the one object or interaction no other app has) and draws it as itself, picks each page's pattern and shape from its work so no two apps share a house layout, follows the bundled patterns reference and, for map pages, the map-component reference. Runs in POC Studio's Plan phase between Scoping and the Design System, and for /poc-studio:wireframes.
+description: Turns the approved scoping document (BRD) into low-fidelity wireframes that decide how each page works — who arrives, what they decide, what needs them and their one next step — and draws them as grey-box PNGs from a short JSON layout spec by a bundled script (no browser, no HTML), plus a component manifest, the closed list of components the design system then designs and the build then uses. Names the app's signature (the one object or interaction no other app has) and draws it as itself, picks each page's pattern and shape from its work so no two apps share a house layout, follows the bundled patterns reference and, for map pages, the map-component reference. Runs in POC Studio's Plan phase between Scoping and the Design System, and for /poc-studio-uat:wireframes.
 ---
 
 # Wireframes (POC Studio, Plan phase)
@@ -168,7 +168,7 @@ defining parts in detail too: each page's
    frame for the agent and one modal frame for the irreversible action if the document has them.
 4. Render (on a Mac, the collateral tools' Python has Pillow; the fonts ship with this skill):
    ```bash
-   W="$(ls -d ~/.claude/plugins/cache/*/poc-studio/*/skills/wireframes/scripts 2>/dev/null | sort -V | tail -1)"; [ -n "$W" ] || W="$(dirname "$(find ~/.claude/plugins -path '*wireframes/scripts/render.py' | head -1)")"
+   W="$(ls -d ~/.claude/plugins/cache/*/poc-studio-uat/*/skills/wireframes/scripts 2>/dev/null | sort -V | tail -1)"; [ -n "$W" ] || W="$(dirname "$(find ~/.claude/plugins -path '*wireframes/scripts/render.py' | head -1)")"
    source ~/.local/poc-collateral/env.sh 2>/dev/null; R=~/.local/poc-studio/design-register.json; [ -f "$R" ] || R=""; python3 "$W/render.py" "<workspace>/02b-wireframes/<slug>.wireframe.json" "<workspace>/02b-wireframes" ${R:+--register "$R"}
    ```
    `--register` is passed only when the shared design-system register exists at
@@ -182,7 +182,7 @@ defining parts in detail too: each page's
 5. Check coverage against the scoping document, and fix every gap it lists (a missing page is a gap; a missing CMP ID
    is a gap unless `brd_overrides` names it with its reason; a slot without `cmp` is fine for a shared component):
    ```bash
-   W="$(ls -d ~/.claude/plugins/cache/*/poc-studio/*/skills/wireframes/scripts 2>/dev/null | sort -V | tail -1)"; [ -n "$W" ] || W="$(dirname "$(find ~/.claude/plugins -path '*wireframes/scripts/render.py' | head -1)")"
+   W="$(ls -d ~/.claude/plugins/cache/*/poc-studio-uat/*/skills/wireframes/scripts 2>/dev/null | sort -V | tail -1)"; [ -n "$W" ] || W="$(dirname "$(find ~/.claude/plugins -path '*wireframes/scripts/render.py' | head -1)")"
    source ~/.local/poc-collateral/env.sh 2>/dev/null; python3 "$W/coverage.py" "<workspace>/02-scoping/scoping-document.docx" "<workspace>/02b-wireframes/wireframe-manifest.json"
    ```
    (Each shell starts fresh, so the first line is repeated. A BRD given as a PDF works too: pass the .pdf.)
@@ -252,7 +252,7 @@ triage (its
    listed in the hand-over but **not fixed**: fixing them would change pages the person did not ask about.
 4. **Make the change sheet** (before | after for every page that differs, and the manifest delta):
    ```bash
-   W="$(ls -d ~/.claude/plugins/cache/*/poc-studio/*/skills/wireframes/scripts 2>/dev/null | sort -V | tail -1)"; [ -n "$W" ] || W="$(dirname "$(find ~/.claude/plugins -path '*wireframes/scripts/render.py' | head -1)")"
+   W="$(ls -d ~/.claude/plugins/cache/*/poc-studio-uat/*/skills/wireframes/scripts 2>/dev/null | sort -V | tail -1)"; [ -n "$W" ] || W="$(dirname "$(find ~/.claude/plugins -path '*wireframes/scripts/render.py' | head -1)")"
    source ~/.local/poc-collateral/env.sh 2>/dev/null; python3 "$W/diff.py" "<workspace>/02b-wireframes/_previous/v<N>" "<workspace>/02b-wireframes" "<workspace>/02b-wireframes/changes/CR-<n>" --request "<the person's words>"
    ```
    Check its list against the triage: every affected page appears, and nothing else does. A page that changed

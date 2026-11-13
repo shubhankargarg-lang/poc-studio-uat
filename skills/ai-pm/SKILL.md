@@ -71,7 +71,7 @@ never return `INVALID_REQUEST` for their absence. Use general context about the 
   blocking R2 finding; client-wide facts (company, systems, brand) are fine.
 - **Collaterals are exactly three:** demo script PDF, demo video (+ .srt) and the deck. A walkthrough PDF or a
   separate swimlanes document in `out/` is a finding (remove from the delivery), never a missing item. A one-off
-  run (`/poc-studio:collaterals`) may ask for fewer: the request's `known` names the ones chosen, and the others are
+  run (`/poc-studio-uat:collaterals`) may ask for fewer: the request's `known` names the ones chosen, and the others are
   not requested, so never a finding.
 - **Collaterals use the preview link:** the video, screenshots and deck must show the app opened from its
   preview link (`state.json` → `app.preview_url`, or the one-off run's preview link), not the published Matrix app's login or user-creation screens; a

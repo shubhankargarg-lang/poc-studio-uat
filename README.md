@@ -1,4 +1,7 @@
-# POC Studio
+# POC Studio — UAT
+
+> **Testing copy.** This is the UAT version of POC Studio, used to try changes (such as running in Claude Code cloud sessions) before they go to the live plugin at `shubhankargarg-lang/poc-studio`. Do not use it for live client POCs. Its commands start with `/poc-studio-uat:`, so it can be installed next to the live plugin.
+
 
 A Claude Code plugin that runs a UnifyApps POC end to end for one client:
 
@@ -12,21 +15,21 @@ answers every clarification question, so the person is only asked to approve (or
 In Claude Code:
 
 ```
-/plugin marketplace add shubhankargarg-lang/poc-studio
-/plugin install poc-studio@unifyapps-poc
+/plugin marketplace add shubhankargarg-lang/poc-studio-uat
+/plugin install poc-studio-uat@unifyapps-poc-uat
 ```
 
 On Claude Code 2.1.275 or later, one line also works:
 
 ```
-/plugin install poc-studio --marketplace shubhankargarg-lang/poc-studio
+/plugin install poc-studio --marketplace shubhankargarg-lang/poc-studio-uat
 ```
 
-**Staying on the latest version:** every `/poc-studio:start` first checks GitHub for a newer release. If one exists it
+**Staying on the latest version:** every `/poc-studio-uat:start` first checks GitHub for a newer release. If one exists it
 updates the plugin and asks you to type `/reload-plugins` and run the same command again, so every POC runs on the
 latest version. To also get updates in the background, turn on auto-update once: `/plugin` → **Marketplaces** →
-`unifyapps-poc` → **Enable auto-update**. If the update check cannot run (for example an SSL error), the command stops and shows the reinstall steps: `/plugin` → **+** (top right) → **Manage marketplaces** → **Remove marketplace** (`unifyapps-poc`) → **Add marketplace** (`shubhankargarg-lang/poc-studio`) → **POC Studio** → **Add to computer**, then a new chat. Manual update at any time:
-`/plugin marketplace update unifyapps-poc`, `/plugin update poc-studio@unifyapps-poc`, then `/reload-plugins`.
+`unifyapps-poc-uat` → **Enable auto-update**. If the update check cannot run (for example an SSL error), the command stops and shows the reinstall steps: `/plugin` → **+** (top right) → **Manage marketplaces** → **Remove marketplace** (`unifyapps-poc-uat`) → **Add marketplace** (`shubhankargarg-lang/poc-studio-uat`) → **POC Studio** → **Add to computer**, then a new chat. Manual update at any time:
+`/plugin marketplace update unifyapps-poc-uat`, `/plugin update poc-studio-uat@unifyapps-poc-uat`, then `/reload-plugins`.
 
 ## Releasing a change (maintainers)
 
@@ -77,10 +80,10 @@ asked to drop the video into the shared drive.
 Open Claude Code in the folder where the POC files should live, then:
 
 ```
-/poc-studio:start <Client name> | <Use case name> | <POC ID>
+/poc-studio-uat:start <Client name> | <Use case name> | <POC ID>
 ```
 
-For example `/poc-studio:start Acme | Invoice matching | POC-acme-20261018`. **The POC ID is required** (format
+For example `/poc-studio-uat:start Acme | Invoice matching | POC-acme-20261018`. **The POC ID is required** (format
 `POC-<client>-<YYYYMMDD>`); the run does not start until it is given, and it must exist in Orbit: right after the update check, the run reads
 the Orbit object `orbit_studio_poc` (filtered on `poc_id`) and stops, asking you to check the ID, if it is not found. The POC ID is recorded in the progress file,
 the documents and the build so everything can be traced to the POC.
@@ -107,16 +110,16 @@ under **Assets**), shows you the file and its links, and asks you to approve it.
 **One OK to the next asset.** When an asset is approved, the question also offers **Approve and make <next asset>**
 (Requirements → BRD → Wireframes → Design system → App → Collaterals). Choosing it starts the next one-off asset at
 once, using the asset just approved as its input; only what is still missing is asked. Each asset stays a one-off
-under Assets: a chain of one-offs never becomes or moves a POC (that is only `/poc-studio:start`).
+under Assets: a chain of one-offs never becomes or moves a POC (that is only `/poc-studio-uat:start`).
 
 | Command | Makes (Orbit type) | Runs | Assets page |
 |---|---|---|---|
-| `/poc-studio:requirements <Client> \| <Use case> [\| <POC ID>]` | Requirement Gathering document (`requirements`) | `requirement-gathering` | `/assets/requirements` |
-| `/poc-studio:brd <Client> \| <Use case> [\| <POC ID>]` | BRD / scoping document (`brd`) | `scoping-l1-first` | `/assets/brd` |
-| `/poc-studio:wireframes <Client> \| <Use case> [\| <POC ID>]` | Low-fidelity wireframes: PNG frames, PDF and component manifest (`wireframes`) | `wireframes` | `/assets/wireframes` |
-| `/poc-studio:design <Client> \| <Use case> [\| <POC ID>]` | Design system, HTML (`design_system`) | `design-system` | `/assets/design-system` |
-| `/poc-studio:app <Client> \| <Use case> [\| <POC ID>]` | The app, saved as its preview link (`app`) | Stage 4: `ua:setup`, `platform-master`, `ua:plan` (Zen) | `/assets/app` |
-| `/poc-studio:collaterals <Client> \| <Use case> \| <App preview link> [\| <POC ID>]` | Demo script, deck, video — you choose any one, two or all three (`demo_script`, `deck`, `video`) | `poc-collateral-studio` | `/assets/demo-script`, `/assets/deck`, `/assets/video` |
+| `/poc-studio-uat:requirements <Client> \| <Use case> [\| <POC ID>]` | Requirement Gathering document (`requirements`) | `requirement-gathering` | `/assets/requirements` |
+| `/poc-studio-uat:brd <Client> \| <Use case> [\| <POC ID>]` | BRD / scoping document (`brd`) | `scoping-l1-first` | `/assets/brd` |
+| `/poc-studio-uat:wireframes <Client> \| <Use case> [\| <POC ID>]` | Low-fidelity wireframes: PNG frames, PDF and component manifest (`wireframes`) | `wireframes` | `/assets/wireframes` |
+| `/poc-studio-uat:design <Client> \| <Use case> [\| <POC ID>]` | Design system, HTML (`design_system`) | `design-system` | `/assets/design-system` |
+| `/poc-studio-uat:app <Client> \| <Use case> [\| <POC ID>]` | The app, saved as its preview link (`app`) | Stage 4: `ua:setup`, `platform-master`, `ua:plan` (Zen) | `/assets/app` |
+| `/poc-studio-uat:collaterals <Client> \| <Use case> \| <App preview link> [\| <POC ID>]` | Demo script, deck, video — you choose any one, two or all three (`demo_script`, `deck`, `video`) | `poc-collateral-studio` | `/assets/demo-script`, `/assets/deck`, `/assets/video` |
 
 Assets pages are at `https://poc-build-loop-orbit.tensor-uat.unifyapps.com/assets/<page>`. The POC ID is optional on
 every command: when it is given and found in Orbit, the row shows a POC chip; a one-off asset never moves a POC.
@@ -140,7 +143,7 @@ retried on the next one-asset run.
 
 ## Run modes: Sonic or Zen
 
-Every run (`/poc-studio:start` and each one-asset command) asks once, at the start, which mode to use:
+Every run (`/poc-studio-uat:start` and each one-asset command) asks once, at the start, which mode to use:
 
 | | Zen | Sonic |
 |---|---|---|
@@ -167,14 +170,14 @@ run was saved (or which were not). Logging never blocks a run.
 ## Feedback
 
 ```
-/poc-studio:feedback <what went well or wrong, what should change>
-/poc-studio:feedback status FB-<n>
+/poc-studio-uat:feedback <what went well or wrong, what should change>
+/poc-studio-uat:feedback status FB-<n>
 ```
 
 Files one piece of feedback as a ticket (`FB-<n>`) on POC Build Loop's Feedback page
 (https://poc-build-loop-orbit.tensor-uat.unifyapps.com/feedback) and gives back its ID and link. It can be about a POC,
 a one-off asset, or POC Studio in general (no POC needed). Screenshots, logs or other files given with it (up to 10,
-20 MB each) are attached to the ticket. Tickets start as To be Assigned and are triaged there: assignee, priority, status (To be Assigned, Research, In-Progress, Blocked, In QA, QA Rejected, Done). `/poc-studio:feedback` checks for a newer POC Studio first and asks you to update before filing.
+20 MB each) are attached to the ticket. Tickets start as To be Assigned and are triaged there: assignee, priority, status (To be Assigned, Research, In-Progress, Blocked, In QA, QA Rejected, Done). `/poc-studio-uat:feedback` checks for a newer POC Studio first and asks you to update before filing.
 `status FB-<n>` shows a ticket's status, priority, assignee and latest activity from Orbit. Feedback does not move a
 POC or post to Slack, and skill proposals now come from iterations (change requests at gates) only. (Plain `/feedback`
 is Claude Code's own bug-report command, so use the `poc-studio:` prefix.)
@@ -213,7 +216,7 @@ Research answers are saved in `research/`, reviewer verdicts in `reviews/`.
 ### Changes after the app is built
 
 A change you ask for once the app exists (at the verify gate, during collaterals, after the run, or on a one-off
-`/poc-studio:app`) is triaged by the AI PM before anything touches the app:
+`/poc-studio-uat:app`) is triaged by the AI PM before anything touches the app:
 
 | Tier | Examples | What happens |
 |---|---|---|
@@ -228,10 +231,10 @@ new components are styled from its kit and tokens. The whole app is never re-pla
 
 ```
 .claude-plugin/plugin.json, marketplace.json
-commands/start.md                  /poc-studio:start
-commands/feedback.md               /poc-studio:feedback
+commands/start.md                  /poc-studio-uat:start
+commands/feedback.md               /poc-studio-uat:feedback
 commands/requirements.md, brd.md, wireframes.md, design.md, app.md, collaterals.md
-                                   /poc-studio:<asset> — make one asset on its own
+                                   /poc-studio-uat:<asset> — make one asset on its own
 agents/ai-pm.md                    the AI PM, run as an independent subagent
 hooks/                             route questions to the reviewer while a stage runs
 scripts/release.sh                 bump the version everywhere, commit, push

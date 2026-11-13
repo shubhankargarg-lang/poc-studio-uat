@@ -45,7 +45,7 @@ Search terms: the client's name and spelling variants (e.g. "Pentland", "Pentala
 Follow links and attachments found in what you read, and references in passing ("the deck they sent"). Stop a source when two searches bring nothing new.
 
 ### Getting outside facts
-Any web lookup this stage needs (the client's website, what the company does, its brands or units) goes through the `research` skill. Invoke it with the Skill tool (`research`, or the plugin-qualified name the session lists, e.g. `poc-studio:research`). Send:
+Any web lookup this stage needs (the client's website, what the company does, its brands or units) goes through the `research` skill. Invoke it with the Skill tool (`research`, or the plugin-qualified name the session lists, e.g. `poc-studio-uat:research`). Send:
 - **Question(s):** specific, one decision each, e.g. "What is <Client>'s official website, and what does the company do, for whom, under which brands?"
 - **Purpose:** internal check that confirms the client brief (Section 1); quick depth.
 - **Context:** client name and spelling variants, anything already found in Slack, Drive or email.

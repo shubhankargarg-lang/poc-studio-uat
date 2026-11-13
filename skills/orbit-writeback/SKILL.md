@@ -1,6 +1,6 @@
 ---
 name: orbit-writeback
-description: Keeps Orbit · POC Studio (orbit.uat.unifyapps.com) in step with a POC Studio run, files feedback tickets in POC Build Loop and reads their status (/poc-studio:feedback), logs one Observability row per skill run (Moment 7), or runs one write-back moment by hand when the person asks to test it — uploads each gate's files and writes Document, Activity, Iteration and POC rows at the six write-back moments (gate posted, gate approved, changes asked, stage moved, new version ready, blocked). Called by the poc-orchestrator before and after every gate; also verifies the POC ID at start.
+description: Keeps Orbit · POC Studio (orbit.uat.unifyapps.com) in step with a POC Studio run, files feedback tickets in POC Build Loop and reads their status (/poc-studio-uat:feedback), logs one Observability row per skill run (Moment 7), or runs one write-back moment by hand when the person asks to test it — uploads each gate's files and writes Document, Activity, Iteration and POC rows at the six write-back moments (gate posted, gate approved, changes asked, stage moved, new version ready, blocked). Called by the poc-orchestrator before and after every gate; also verifies the POC ID at start.
 ---
 
 # Orbit write-back (POC Studio)
@@ -141,7 +141,7 @@ discovered input, `<source>-<short name>` (`slack-…`, `drive-…`, `gmail-…`
 
 - `type`: slack · requirements · brd · wireframes · design_system · app · demo_script · deck · video
 - **Every Document create in the pipeline** sends `"origin": "pipeline"`, `"client_name"` and `"use_case"` (from the
-  POC row read in Setup). One-off documents (`/poc-studio:<asset>` commands) are written by "One-off documents" below.
+  POC row read in Setup). One-off documents (`/poc-studio-uat:<asset>` commands) are written by "One-off documents" below.
 - **App documents** (`type app`) always carry the app's **preview link** as `file_link`, by the "Preview link rule"
   below, never the published matrix URL.
 - `status`: in_review (its gate is waiting) · approved (gate passed) · final (inputs and Deliver files) · superseded
@@ -714,9 +714,9 @@ Given a published link (`*.matrix-uat.unifyapps.com`, `*.tensor-uat.unifyapps.co
 preview link from the app id in it. Without an id, ask for the preview link. Never save or record from a matrix link:
 it needs a user to be created before it opens.
 
-## One-off documents (`/poc-studio:<asset>` commands)
+## One-off documents (`/poc-studio-uat:<asset>` commands)
 
-The standalone commands (`/poc-studio:requirements`, `brd`, `wireframes`, `design`, `app`, `collaterals`, run by
+The standalone commands (`/poc-studio-uat:requirements`, `brd`, `wireframes`, `design`, `app`, `collaterals`, run by
 the `asset-run` skill) write **one-off documents**: rows in `orbit_studio_document` with `origin: "standalone"`, shown in
 POC Build Loop under **Assets** (`https://poc-build-loop-orbit.tensor-uat.unifyapps.com/assets/<type-slug>`). This
 section is the only place they are written from; `asset-run` calls it.
@@ -798,12 +798,12 @@ make v(N+1), and the older version shows as superseded in the app's "older versi
 version is written by the steps above when the reworked file is ready.
 
 **Failures.** Three tries per write. Then tell the person in one line, keep the row (and file path) in `state.json` →
-`standalone.failed_writes`, and retry it at the start of the next run of any `/poc-studio:<asset>` command in this
+`standalone.failed_writes`, and retry it at the start of the next run of any `/poc-studio-uat:<asset>` command in this
 workspace. The local files are the deliverable either way: a failed Orbit write never stops the asset.
 
 ## /feedback — feedback tickets (`orbit_studio_feedback`, `orbit_studio_feedback_event`)
 
-`/poc-studio:feedback <text>` files one piece of feedback as a **ticket** on POC Build Loop's Feedback page
+`/poc-studio-uat:feedback <text>` files one piece of feedback as a **ticket** on POC Build Loop's Feedback page
 (https://poc-build-loop-orbit.tensor-uat.unifyapps.com/feedback): how a POC or a one-off asset went, what the outputs
 got wrong, what should change in POC Studio. It is **not** a change request on one document (that is an Iteration,
 Moment 3, unchanged). Each ticket has its own ID (`FB-<Date.now()>`), a status, a priority and an activity history; people
@@ -892,7 +892,7 @@ deletes a ticket.
         | `wireframes` | the wireframes, page layouts, which components a page has |
         | `design-system` | palette, brand, components, the design system |
         | `poc-orchestrator` | how the run is driven, gates, the UnifyApps Headless build, app quality |
-        | `asset-run` | the one-asset commands (`/poc-studio:requirements`, `brd`, `wireframes`, `design`, `app`, `collaterals`) |
+        | `asset-run` | the one-asset commands (`/poc-studio-uat:requirements`, `brd`, `wireframes`, `design`, `app`, `collaterals`) |
         | `connector-discovery` | the client connection, the Integration Spec, the model tests and model recovery |
         | `platform-master` | Stage 4 pointers, the Zen question review, the Zen plan review, the browser fallback |
         | `poc-collateral-studio` | demo script, deck, video |
@@ -906,7 +906,7 @@ deletes a ticket.
    - **A `ticket_no` clash** (duplicate or unique-key error): `python3 "$O/feedback_ticket.py" retry $TMPDIR/fb`
      (now+1 for `ticket_no`, `ticket_key`, both times and the event) and send again, **at most 3 times**.
    - **Any other error, or still failing:** show the platform's error message in one line and what to do (e.g. run
-     `/ua:setup` here on orbit.uat.unifyapps.com and sign in, then `/poc-studio:feedback` again). **Never say
+     `/ua:setup` here on orbit.uat.unifyapps.com and sign in, then `/poc-studio-uat:feedback` again). **Never say
      "Logged" for a write that failed.** A failed ticket is not retried later and not added to `failed_writes`.
 5. **Create the activity row** right after, only once the ticket saved: send `event.json` as it is
    (`orbit_studio_feedback_event`, type `created`, the ticket's ms; its `ticket` field links to the ticket, so the
@@ -926,7 +926,7 @@ follows these steps, with the builder.
 
 ### Ticket status
 
-`/poc-studio:feedback status FB-<n>` (also `status <n>`, `fb <n>`, `FB-<n>` or just `<n>`, e.g. `FB-1793634938058`) is a **read only**; write nothing.
+`/poc-studio-uat:feedback status FB-<n>` (also `status <n>`, `fb <n>`, `FB-<n>` or just `<n>`, e.g. `FB-1793634938058`) is a **read only**; write nothing.
 - Read the ticket: `get_records` on `orbit_studio_feedback`, filter `ticket_key` EQUAL `FB-<n>`, `limit` 1. Not found →
   say so in one line.
 - Read its activity: `get_records` on `orbit_studio_feedback_event`, filter `ticket_key` EQUAL `FB-<n>`, sort

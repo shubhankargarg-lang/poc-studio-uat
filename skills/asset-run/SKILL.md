@@ -1,22 +1,22 @@
 ---
 name: asset-run
-description: Makes ONE POC Studio asset on its own — a Requirement Gathering document, a BRD (scoping document), wireframes, a design system, an app, or the collaterals (demo script, deck, video; any of them) — without a POC and without running the other stages. Collects that asset's prerequisites in the chat first, then runs the existing stage skill unchanged and unattended, has the AI PM review it, writes it to Orbit as a one-off document (a new version every time), shows it in the chat and asks for approval. Loaded by the /poc-studio:requirements, brd, wireframes, design, app and collaterals commands; not for the full pipeline (/poc-studio:start).
+description: Makes ONE POC Studio asset on its own — a Requirement Gathering document, a BRD (scoping document), wireframes, a design system, an app, or the collaterals (demo script, deck, video; any of them) — without a POC and without running the other stages. Collects that asset's prerequisites in the chat first, then runs the existing stage skill unchanged and unattended, has the AI PM review it, writes it to Orbit as a one-off document (a new version every time), shows it in the chat and asks for approval. Loaded by the /poc-studio-uat:requirements, brd, wireframes, design, app and collaterals commands; not for the full pipeline (/poc-studio-uat:start).
 ---
 
 # One asset, end to end (`asset-run`)
 
-A command (`/poc-studio:<asset>`) has already run its update check and names the asset. You make that one asset with
+A command (`/poc-studio-uat:<asset>`) has already run its update check and names the asset. You make that one asset with
 the plugin's existing parts — the stage skill, the AI PM, the autopilot hooks and orbit-writeback — and nothing else.
-The full pipeline (`/poc-studio:start`, `poc-orchestrator`) is not involved and is never changed by a one-off run.
+The full pipeline (`/poc-studio-uat:start`, `poc-orchestrator`) is not involved and is never changed by a one-off run.
 
 | Asset | Command | Stage skill | AI PM `stage` | Orbit `type` (one row each) | Output folder |
 |---|---|---|---|---|---|
-| `requirements` | `/poc-studio:requirements` | `requirement-gathering` | `requirement-gathering` | `requirements` | `01-requirement-gathering/` |
-| `brd` | `/poc-studio:brd` | `scoping-l1-first` | `scoping` | `brd` | `02-scoping/` |
-| `wireframes` | `/poc-studio:wireframes` | `wireframes` | `wireframes` | `wireframes` | `02b-wireframes/` |
-| `design` | `/poc-studio:design` | `design-system` | `design-system` | `design_system` | `03-design-system/` |
-| `app` | `/poc-studio:app` | `ua:setup`, `platform-master`, `ua:plan` (Zen) — Stage 4 | `build` (Stage 4b) | `app` | `04-build/` |
-| `collaterals` | `/poc-studio:collaterals` | `poc-collateral-studio` | `collaterals` | `demo_script`, `deck`, `video` (the ones chosen) | `05-collaterals/` |
+| `requirements` | `/poc-studio-uat:requirements` | `requirement-gathering` | `requirement-gathering` | `requirements` | `01-requirement-gathering/` |
+| `brd` | `/poc-studio-uat:brd` | `scoping-l1-first` | `scoping` | `brd` | `02-scoping/` |
+| `wireframes` | `/poc-studio-uat:wireframes` | `wireframes` | `wireframes` | `wireframes` | `02b-wireframes/` |
+| `design` | `/poc-studio-uat:design` | `design-system` | `design-system` | `design_system` | `03-design-system/` |
+| `app` | `/poc-studio-uat:app` | `ua:setup`, `platform-master`, `ua:plan` (Zen) — Stage 4 | `build` (Stage 4b) | `app` | `04-build/` |
+| `collaterals` | `/poc-studio-uat:collaterals` | `poc-collateral-studio` | `collaterals` | `demo_script`, `deck`, `video` (the ones chosen) | `05-collaterals/` |
 
 Load every skill with the Skill tool by its plugin name (`poc-studio:<skill>`). `R` below is the AI PM's scripts folder:
 `R=$(dirname "$(find ~/.claude/plugins -path '*ai-pm/scripts/lessons.py' | head -1)")`. On a Mac, every Bash command
@@ -76,10 +76,10 @@ on without it):
 | Asset | Required | Optional | When something required is missing |
 |---|---|---|---|
 | requirements | Client name · Use case · Slack and Google Drive connectors (their tools are in the session) | Client website · Gmail and Calendar connectors | Connectors: stop and ask the person to connect them (in Claude Code: `/mcp`, or as a claude.ai connector), then check again, as Setup does |
-| brd | Client name · Use case · **At least one input**: an RG document, meeting notes, an email, client files, or a Slack or Drive link · For connector discovery: the UnifyApps Headless plugin (`ua`) installed and this folder set up on `orbit.uat.unifyapps.com` (`/ua:setup`) — required when the input names a client system the app reads from or writes to; otherwise optional (without it, the model inventory is skipped and the models are marked `unknown` until the build's verify step) | Client website | Offer two options: "Run `/poc-studio:requirements` first" or "Paste or attach what you have" |
-| wireframes | Client name · Use case · **BRD or scoping document** (.docx or PDF) | — | Offer "Run `/poc-studio:brd` first" or "Attach a BRD" |
-| design | Client name · Use case · **BRD or scoping document** (.docx or PDF) · Client website (ask once; accept "derive it", then the skill derives it) | Wireframes (an approved `wireframe-manifest.json` from this workspace; without it, the design system works from the BRD alone, and offer `/poc-studio:wireframes` first) · Client logo file · Brand guidelines | Offer "Run `/poc-studio:brd` first" or "Attach a BRD" |
-| app | Client name · Use case · **BRD or scoping document** · The UnifyApps Headless plugin (`ua`) installed and this folder set up on `orbit.uat.unifyapps.com` (`/ua:setup`) · The collateral tools (Playwright, for the Stage 4b walk) and a valid Orbit sign-in, as for collaterals below · Not a folder whose UnifyApps Headless setup belongs to a pipeline run (below) | Approved wireframes (manifest and frames; else the build follows the BRD's page specs alone) · Design system HTML (without one, say the build uses UnifyApps Headless's default look, and offer `/poc-studio:design` first) | Plugin or setup missing: tell the person what to install or run, then check again |
+| brd | Client name · Use case · **At least one input**: an RG document, meeting notes, an email, client files, or a Slack or Drive link · For connector discovery: the UnifyApps Headless plugin (`ua`) installed and this folder set up on `orbit.uat.unifyapps.com` (`/ua:setup`) — required when the input names a client system the app reads from or writes to; otherwise optional (without it, the model inventory is skipped and the models are marked `unknown` until the build's verify step) | Client website | Offer two options: "Run `/poc-studio-uat:requirements` first" or "Paste or attach what you have" |
+| wireframes | Client name · Use case · **BRD or scoping document** (.docx or PDF) | — | Offer "Run `/poc-studio-uat:brd` first" or "Attach a BRD" |
+| design | Client name · Use case · **BRD or scoping document** (.docx or PDF) · Client website (ask once; accept "derive it", then the skill derives it) | Wireframes (an approved `wireframe-manifest.json` from this workspace; without it, the design system works from the BRD alone, and offer `/poc-studio-uat:wireframes` first) · Client logo file · Brand guidelines | Offer "Run `/poc-studio-uat:brd` first" or "Attach a BRD" |
+| app | Client name · Use case · **BRD or scoping document** · The UnifyApps Headless plugin (`ua`) installed and this folder set up on `orbit.uat.unifyapps.com` (`/ua:setup`) · The collateral tools (Playwright, for the Stage 4b walk) and a valid Orbit sign-in, as for collaterals below · Not a folder whose UnifyApps Headless setup belongs to a pipeline run (below) | Approved wireframes (manifest and frames; else the build follows the BRD's page specs alone) · Design system HTML (without one, say the build uses UnifyApps Headless's default look, and offer `/poc-studio-uat:design` first) | Plugin or setup missing: tell the person what to install or run, then check again |
 | collaterals | Client name · Use case · **Which collaterals** (always asked, below) · **App preview link** (Preview link rule) · Orbit sign-in valid · The collateral tools for the ones chosen | BRD or scoping document (strongly recommended: it drives the story and personas) · RG document · Audience: business, technical or mixed (else the skill decides) | Ask |
 
 **Collaterals — which ones (always asked).** Unless the command already says which (the extra argument or words such
@@ -232,7 +232,7 @@ Update the run's `status` to `in_review` when the stage's output exists.
 
 ## 4 · AI PM review
 
-As the orchestrator's "Calling the reviewer" does: the `ai-pm` agent (`subagent_type` `poc-studio:ai-pm`), a request
+As the orchestrator's "Calling the reviewer" does: the `ai-pm` agent (`subagent_type` `poc-studio-uat:ai-pm`), a request
 YAML in `<workspace>/reviews/<stage>-review-<n>.request.yaml`. **`<n>` is never reused, in every mode:** for review
 files and for the resolve files written when a question goes to the AI PM during the stage
 (`<stage>-resolve-<n>.request.yaml` and its verdict), `<n>` is the highest number already in `reviews/` for that
@@ -250,7 +250,7 @@ ruling, ASK_HUMAN, research requests. For the app, this is the Stage 4b walk ins
 ## 5 · Write to Orbit, then show it in the chat
 
 1. **Write first**, with status `in_review`, so the asset is in POC Build Loop as soon as it exists: load
-   `orbit-writeback` (Skill tool: `poc-studio:orbit-writeback`) and follow **"One-off documents"** — the version
+   `orbit-writeback` (Skill tool: `poc-studio-uat:orbit-writeback`) and follow **"One-off documents"** — the version
    lookup in Orbit, the upload (public URL; for the video, "Video to Google Drive" with the file name
    `SA - <Client> - <Use case> - Demo video v<N>.mp4`), the row, earlier versions `superseded`, the read-back.
    Collaterals: one row per collateral delivered, in one `apply_record_edits` call. Record `document_id`, `version`
@@ -301,7 +301,7 @@ ruling, ASK_HUMAN, research requests. For the app, this is the Stage 4b walk ins
     collaterals) is asked, in one question, as § 1 says.
   - It stays a one-off: its own run entry, its own Orbit row under Assets (a new version if one exists), and the same
     POC ID chip if one was given. **It never starts, joins or moves a POC run**, its stages or its gates, whatever
-    the workspace holds; the full loop is only ever `/poc-studio:start`.
+    the workspace holds; the full loop is only ever `/poc-studio-uat:start`.
   - At its approval the same question comes again, so the person can carry on, one OK per asset, or stop with
     **Approve**.
 - **Request changes** → log their words verbatim in `context-log.md` (a human decision for every later review),
@@ -332,4 +332,4 @@ ruling, ASK_HUMAN, research requests. For the app, this is the Stage 4b walk ins
 - Delete a file or an Orbit row (earlier versions become `superseded`; earlier files go to `_previous/`).
 - Type a password, or answer a `CONFIRM_REQUIRED` for the person.
 - Start the stage before its required prerequisites are in hand.
-- Turn a chain of one-off assets into a POC run, or offer to (the full loop starts only with `/poc-studio:start`).
+- Turn a chain of one-off assets into a POC run, or offer to (the full loop starts only with `/poc-studio-uat:start`).

@@ -1,17 +1,17 @@
 {
-  "name": "unifyapps-poc",
+  "name": "unifyapps-poc-uat",
   "owner": {
     "name": "UnifyApps Solutions"
   },
   "metadata": {
-    "description": "UnifyApps POC Studio plugins",
+    "description": "UnifyApps POC Studio — UAT (testing copy)",
     "version": "1.0.0"
   },
   "plugins": [
     {
-      "name": "poc-studio",
+      "name": "poc-studio-uat",
       "source": "./",
-      "description": "End-to-end UnifyApps POC pipeline: requirement gathering → scoping → wireframes → design system → UnifyApps Headless build → collaterals, reviewed and approval-gated at every stage.",
+      "description": "[UAT — testing copy] End-to-end UnifyApps POC pipeline: requirement gathering → scoping → wireframes → design system → UnifyApps Headless build → collaterals, reviewed and approval-gated at every stage.",
       "version": "1.42.3"
     }
   ]

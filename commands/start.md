@@ -17,7 +17,7 @@ LOADED="1.42.3"
 python3 - "$LOADED" <<'PY'
 import json, subprocess, sys, urllib.request
 loaded = sys.argv[1]
-url = "https://raw.githubusercontent.com/shubhankargarg-lang/poc-studio/main/.claude-plugin/plugin.json"
+url = "https://raw.githubusercontent.com/shubhankargarg-lang/poc-studio-uat/main/.claude-plugin/plugin.json"
 try:
     latest = json.load(urllib.request.urlopen(url, timeout=10))["version"]
 except Exception as e:
@@ -28,9 +28,9 @@ if v(latest) <= v(loaded):
 def run(*cmd):
     r = subprocess.run(cmd, capture_output=True, text=True)
     print("$", " ".join(cmd)); print((r.stdout + r.stderr).strip()); return r.returncode
-ok = run("claude", "plugin", "marketplace", "update", "unifyapps-poc") == 0
+ok = run("claude", "plugin", "marketplace", "update", "unifyapps-poc-uat") == 0
 for scope in ("user", "project", "local"):
-    if ok and run("claude", "plugin", "update", "poc-studio@unifyapps-poc", "-s", scope) == 0:
+    if ok and run("claude", "plugin", "update", "poc-studio-uat@unifyapps-poc-uat", "-s", scope) == 0:
         print(f"UPDATED {loaded} -> {latest}"); sys.exit(0)
 print(f"UPDATE_FAILED {loaded} -> {latest}")
 PY
@@ -42,17 +42,17 @@ Then act on the last line it printed:
 - **`UPDATED <old> -> <new>`** → the new version is on disk, but this session is still running the old one, and only
   the person can switch it. **Stop here and do not start the pipeline.** Tell the person, in two lines:
   "POC Studio was updated from <old> to <new>. Type `/reload-plugins`, then run the same command again:
-  `/poc-studio:start $ARGUMENTS`".
+  `/poc-studio-uat:start $ARGUMENTS`".
 - **`UPDATE_FAILED` or `UPDATE_CHECK_FAILED`** (the update could not run, or GitHub could not be reached, for example
   an SSL error) → **stop here; do not continue on this version.** Tell the person, in these words, then wait:
   "POC Studio could not update itself. Please reinstall it (2 minutes):
   1. Type `/plugin` and press Enter.
   2. Click the **+** (Add) button at the top right.
   3. Choose **Manage marketplaces**.
-  4. Next to **unifyapps-poc**, click **Remove marketplace**.
-  5. Click **Add marketplace** and enter `shubhankargarg-lang/poc-studio`.
+  4. Next to **unifyapps-poc-uat**, click **Remove marketplace**.
+  5. Click **Add marketplace** and enter `shubhankargarg-lang/poc-studio-uat`.
   6. Find **POC Studio** and click **Add to computer**.
-  7. Open a **new chat** and run: `/poc-studio:start $ARGUMENTS`"
+  7. Open a **new chat** and run: `/poc-studio-uat:start $ARGUMENTS`"
   Only if the person says they have already done these steps and the check still fails, carry on, and say in one
   line which version you are continuing on.
 
@@ -60,7 +60,7 @@ Then act on the last line it printed:
 
 Only once Step 0 has finished and the POC ID has been given:
 
-1. Load the `orbit-writeback` skill (Skill tool: `poc-studio:orbit-writeback`) and run its **Setup**: load UnifyApps Headless's
+1. Load the `orbit-writeback` skill (Skill tool: `poc-studio-uat:orbit-writeback`) and run its **Setup**: load UnifyApps Headless's
    tenant tools, then call `get_records` on the object **`orbit_studio_poc`** on Orbit UAT
    (`https://orbit.uat.unifyapps.com`), **filtered on `poc_id` EQUAL the POC ID given above**.
 2. **Found** → keep the record id and the POC owner's name and email (they go in `state.json` → `orbit` once the
@@ -86,7 +86,7 @@ that already has a mode: do not ask again; say the mode in the resume line, and 
 
 ## Step 3 — run the pipeline
 
-Load the `poc-orchestrator` skill from this plugin (Skill tool: `poc-studio:poc-orchestrator`) and follow it exactly,
+Load the `poc-orchestrator` skill from this plugin (Skill tool: `poc-studio-uat:poc-orchestrator`) and follow it exactly,
 starting with Setup. If the client name, the use case name or the POC ID is missing above, ask once for the missing
 values and **wait**; nothing starts without the POC ID. If a workspace for this client and use case already exists in
 the current folder with the same POC ID, resume from its `state.json`.

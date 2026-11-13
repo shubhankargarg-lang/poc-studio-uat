@@ -60,7 +60,7 @@ This skill's scripts, references and assets sit in its own folder inside the plu
 written from `$D`. Each shell starts fresh, so **start every command block with these two lines**, as they are:
 
 ```bash
-source ~/.local/poc-collateral/env.sh 2>/dev/null; D="$(ls -d ~/.claude/plugins/cache/*/poc-studio/*/skills/design-system 2>/dev/null | sort -V | tail -1)"; [ -n "$D" ] || D="$(dirname "$(find ~/.claude/plugins -path '*design-system/scripts/check_ds.py' 2>/dev/null | head -1)")/.."; [ -f "$D/scripts/check_ds.py" ] || echo "check: design-system skill folder not found"
+source ~/.local/poc-collateral/env.sh 2>/dev/null; D="$(ls -d ~/.claude/plugins/cache/*/poc-studio-uat/*/skills/design-system 2>/dev/null | sort -V | tail -1)"; [ -n "$D" ] || D="$(dirname "$(find ~/.claude/plugins -path '*design-system/scripts/check_ds.py' 2>/dev/null | head -1)")/.."; [ -f "$D/scripts/check_ds.py" ] || echo "check: design-system skill folder not found"
 R="$HOME/.local/poc-studio/design-register.json"; [ -f "$R" ] || { mkdir -p "$(dirname "$R")" && cp "$D/register/register.json" "$R"; }
 ```
 
@@ -221,7 +221,7 @@ every page and where. Read all three before 0.1, then:
    token-driven filter.
 6. **Check by script before hand-over:**
    ```bash
-   source ~/.local/poc-collateral/env.sh 2>/dev/null; D="$(ls -d ~/.claude/plugins/cache/*/poc-studio/*/skills/design-system 2>/dev/null | sort -V | tail -1)"; [ -n "$D" ] || D="$(dirname "$(find ~/.claude/plugins -path '*design-system/scripts/check_ds.py' 2>/dev/null | head -1)")/.."; [ -f "$D/scripts/check_ds.py" ] || echo "check: design-system skill folder not found"
+   source ~/.local/poc-collateral/env.sh 2>/dev/null; D="$(ls -d ~/.claude/plugins/cache/*/poc-studio-uat/*/skills/design-system 2>/dev/null | sort -V | tail -1)"; [ -n "$D" ] || D="$(dirname "$(find ~/.claude/plugins -path '*design-system/scripts/check_ds.py' 2>/dev/null | head -1)")/.."; [ -f "$D/scripts/check_ds.py" ] || echo "check: design-system skill folder not found"
    R="$HOME/.local/poc-studio/design-register.json"; [ -f "$R" ] || { mkdir -p "$(dirname "$R")" && cp "$D/register/register.json" "$R"; }
    python3 -I "$D/scripts/check_ds.py" <client>-design-system.html wireframe-manifest.json --register "$R"
    ```
@@ -1562,7 +1562,7 @@ is good, whether it is this client's, and whether it is unlike every app we made
 
 1. **Scan and shoot.**
    ```bash
-   source ~/.local/poc-collateral/env.sh 2>/dev/null; D="$(ls -d ~/.claude/plugins/cache/*/poc-studio/*/skills/design-system 2>/dev/null | sort -V | tail -1)"; [ -n "$D" ] || D="$(dirname "$(find ~/.claude/plugins -path '*design-system/scripts/check_ds.py' 2>/dev/null | head -1)")/.."; [ -f "$D/scripts/check_ds.py" ] || echo "check: design-system skill folder not found"
+   source ~/.local/poc-collateral/env.sh 2>/dev/null; D="$(ls -d ~/.claude/plugins/cache/*/poc-studio-uat/*/skills/design-system 2>/dev/null | sort -V | tail -1)"; [ -n "$D" ] || D="$(dirname "$(find ~/.claude/plugins -path '*design-system/scripts/check_ds.py' 2>/dev/null | head -1)")/.."; [ -f "$D/scripts/check_ds.py" ] || echo "check: design-system skill folder not found"
    R="$HOME/.local/poc-studio/design-register.json"; [ -f "$R" ] || { mkdir -p "$(dirname "$R")" && cp "$D/register/register.json" "$R"; }
    python3 -I "$D/scripts/scan.py" <client>-design-system.html <work>/scan
    ```
@@ -1682,7 +1682,7 @@ the rules for the rest (0.6).
    chosen direction as built. Once `check_ds.py … --register "$R"` is clean (it also compares the fingerprint with
    every app in the register), add it to the shared register:
    ```bash
-   source ~/.local/poc-collateral/env.sh 2>/dev/null; D="$(ls -d ~/.claude/plugins/cache/*/poc-studio/*/skills/design-system 2>/dev/null | sort -V | tail -1)"; [ -n "$D" ] || D="$(dirname "$(find ~/.claude/plugins -path '*design-system/scripts/check_ds.py' 2>/dev/null | head -1)")/.."; [ -f "$D/scripts/check_ds.py" ] || echo "check: design-system skill folder not found"
+   source ~/.local/poc-collateral/env.sh 2>/dev/null; D="$(ls -d ~/.claude/plugins/cache/*/poc-studio-uat/*/skills/design-system 2>/dev/null | sort -V | tail -1)"; [ -n "$D" ] || D="$(dirname "$(find ~/.claude/plugins -path '*design-system/scripts/check_ds.py' 2>/dev/null | head -1)")/.."; [ -f "$D/scripts/check_ds.py" ] || echo "check: design-system skill folder not found"
    R="$HOME/.local/poc-studio/design-register.json"; [ -f "$R" ] || { mkdir -p "$(dirname "$R")" && cp "$D/register/register.json" "$R"; }
    python3 -I "$D/scripts/register.py" add <client>-design-system.html "$R"
    ```

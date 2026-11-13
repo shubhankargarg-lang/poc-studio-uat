@@ -1,11 +1,11 @@
 {
-  "name": "poc-studio",
+  "name": "poc-studio-uat",
   "version": "1.42.3",
-  "description": "UnifyApps POC pipeline: requirement gathering → scoping → wireframes → design system → UnifyApps Headless build → collaterals, with an AI PM on every stage, a shared research skill, approval gates, and every file saved in the local client folder.",
+  "description": "[UAT — testing copy, not for live POCs] UnifyApps POC pipeline: requirement gathering → scoping → wireframes → design system → UnifyApps Headless build → collaterals, with an AI PM on every stage, a shared research skill, approval gates, and every file saved in the local client folder.",
   "author": {
     "name": "UnifyApps Solutions"
   },
-  "repository": "https://github.com/shubhankargarg-lang/poc-studio",
+  "repository": "https://github.com/shubhankargarg-lang/poc-studio-uat",
   "keywords": [
     "unifyapps",
     "poc",

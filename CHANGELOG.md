@@ -70,13 +70,13 @@ Four stage skills updated together; they are one chain (the BRD feeds the wirefr
 - **You approve the updated wireframes**, in Zen and in Sonic (Approve and update the app / Change the wireframes / Drop this change). Hooks and the AI PM let this through in Sonic.
 - The design system is not updated for a change; new components are styled from its kit and tokens.
 - Orbit: the approved wireframes become a new wireframes version (`from_iteration`, change sheet uploaded); the iteration stays open until the new app version's M5. A dropped change closes the iteration.
-- One-off `/poc-studio:app` change requests use the same triage (wireframes first when the folder has approved wireframes).
+- One-off `/poc-studio-uat:app` change requests use the same triage (wireframes first when the folder has approved wireframes).
 
 ## 1.33.0
 - **Feedback tickets: full shape incl. ticket_key; status list updated.** Tickets filed by v1.27 and earlier had no `ticket_key`, `priority` or `updated_at` (and no `created` activity row), so POC Build Loop could not change their status or owner. Every ticket is now built by `orbit-writeback/scripts/feedback_ticket.py`: `ticket_key` = `ticket_no` = `FB-<ms>`, status `to_be_assigned`, priority `none`, `updated_at` = `created_at`, `poc` and `client_name` only for a POC; no `source`, `poc_stage` or other old fields. The `created` row in `orbit_studio_feedback_event` uses the same ms. A clash retries with now+1 (up to 3 times) for both keys.
 - Status list now includes `research` (To be Assigned, Research, In-Progress, Blocked, In QA, QA Rejected, Done).
 - Every write's reply is checked (`feedback_ticket.py check`): "Logged" is said only when every item is `"ok": true`; otherwise the platform's error is shown.
-- **`/poc-studio:feedback` now checks for a newer POC Studio first**, as `/poc-studio:start` does, and stops until the person updates. Everyone on an older version must update.
+- **`/poc-studio-uat:feedback` now checks for a newer POC Studio first**, as `/poc-studio-uat:start` does, and stops until the person updates. Everyone on an older version must update.
 - `feedback_ticket.py --self-test`: a dry run that builds sample tickets with and without a POC and checks the shape; nothing is sent.
 
 ## 1.32.1
@@ -90,7 +90,7 @@ Four stage skills updated together; they are one chain (the BRD feeds the wirefr
 - Written with the same `apply_record_edits` tool as every other moment. A failed write is retried once, then noted in one line; it never blocks or slows a build. Gate `gate_decided` Activity rows are unchanged.
 
 ## 1.31.0
-- **Run modes: Sonic or Zen**, asked once at the start of every run (`/poc-studio:start` and each one-asset command) and kept in `state.json` → `mode` (a run without one is Zen). **Zen** is the loop as before. **Sonic**: the AI PM's final verdict is each gate (PASS, or the third review's rulings with nothing blocking), so the run moves to the next stage by itself; in Stage 4 the AI PM answers Zen planning's questions and approves its plan after platform-master's review and the builder check.
+- **Run modes: Sonic or Zen**, asked once at the start of every run (`/poc-studio-uat:start` and each one-asset command) and kept in `state.json` → `mode` (a run without one is Zen). **Zen** is the loop as before. **Sonic**: the AI PM's final verdict is each gate (PASS, or the third review's rulings with nothing blocking), so the run moves to the next stage by itself; in Stage 4 the AI PM answers Zen planning's questions and approves its plan after platform-master's review and the builder check.
 - Still asked of the person in Sonic: sign-ins, every `CONFIRM_REQUIRED`, the AI PM's ASK_HUMAN items (credentials, real data, spend, sending or publishing outside Orbit UAT), a BLOCK after the third review, a Not ready requirements verdict, rebuilding pages already built, and a missing tool or connector.
 - Hooks read a new `.poc-studio/sonic` flag and route approval gates to the AI PM too. Orbit: Sonic approvals are written with `actor_type: ai` ("Approved by the AI PM (Sonic mode)") and no `slack_notification`. `lessons.py record … auto` logs Sonic approvals apart from human first-try approvals. One-off runs in Sonic approve the asset without asking and do not chain.
 
@@ -103,22 +103,22 @@ Four stage skills updated together; they are one chain (the BRD feeds the wirefr
 
 ## 1.29.0
 - **Feedback ticket statuses follow POC Build Loop's six values:** new tickets are created as `to_be_assigned` (To be Assigned); `open` and the other old values are never sent (the platform now rejects them). `status FB-<n>` shows the new labels: To be Assigned, In-Progress, Blocked, In QA, QA Rejected, Done.
-- **Attachments:** screenshots, logs, PDFs or paths given with `/poc-studio:feedback` (up to 10, 20 MB each) are uploaded with `orbit agent-builder upload_file` from the Orbit folder and appended to the feedback text as one line each (`![name](link)` for images, `[name](link)` for other files), which the app shows as thumbnails and chips. A failed upload still files the ticket and names the file.
+- **Attachments:** screenshots, logs, PDFs or paths given with `/poc-studio-uat:feedback` (up to 10, 20 MB each) are uploaded with `orbit agent-builder upload_file` from the Orbit folder and appended to the feedback text as one line each (`![name](link)` for images, `[name](link)` for other files), which the app shows as thumbnails and chips. A failed upload still files the ticket and names the file.
 - New reply: `Logged FB-<epoch> (To be Assigned) → <link>` (plus ` · attached N files`). A key clash retries with `now + 1`, up to 3 times.
 
 ## 1.28.1
 - Feedback ticket IDs are timestamps again: `FB-<Date.now()>` (the same value as `created_at`, e.g. `FB-1793634938058`). No `ticket_seq`, no read of the last ticket to number it; a duplicate-key error retries with a new timestamp, at most 3 times. Everything else from 1.28.0 (tickets, optional POC, `created` activity row, link reply, `status`) is unchanged.
 
 ## 1.28.0
-- **Feedback becomes tickets.** `/poc-studio:feedback <text>` files a ticket on POC Build Loop's Feedback page (https://poc-build-loop-orbit.tensor-uat.unifyapps.com/feedback) with a sequential ID `FB-<n>` (next number read from Orbit; a clash retries with the next number, at most 3 times), `status: open`, `priority: none` unless stated, and one `created` row on the new `orbit_studio_feedback_event` object. The reply gives the ticket ID and its link. Assignee, priority, status, due date and tags are set in the app; the plugin never updates or deletes a ticket.
+- **Feedback becomes tickets.** `/poc-studio-uat:feedback <text>` files a ticket on POC Build Loop's Feedback page (https://poc-build-loop-orbit.tensor-uat.unifyapps.com/feedback) with a sequential ID `FB-<n>` (next number read from Orbit; a clash retries with the next number, at most 3 times), `status: open`, `priority: none` unless stated, and one `created` row on the new `orbit_studio_feedback_event` object. The reply gives the ticket ID and its link. Assignee, priority, status, due date and tags are set in the app; the plugin never updates or deletes a ticket.
 - **A POC is optional.** Feedback from a one-off asset workspace is filed without a POC (and without asking); otherwise the person can pick **No POC (general)**. The old "feedback can only be filed against a POC" rule is gone.
-- **`/poc-studio:feedback status FB-<n>`** (or `fb <n>`, `<n>`) reads a ticket's status, priority, assignee and latest activity from Orbit.
+- **`/poc-studio-uat:feedback status FB-<n>`** (or `fb <n>`, `<n>`) reads a ticket's status, priority, assignee and latest activity from Orbit.
 - Feedback no longer feeds the skill analysis (no `analysis_status`): skill proposals come from iterations only. Iterations (Moment 3) are unchanged.
 - Skill keys: `asset-run` added, `research` removed.
 
 ## 1.27.0
 - **One OK to the next asset.** A one-off asset's approval question now also offers **Approve and make <next asset>** (Requirements → BRD → Wireframes → Design system → App → Collaterals). It approves the asset and starts the next one-off at once, with the asset just approved as its input (no re-upload, no "use it?" offer); only what is still missing is asked. The question repeats at each approval, so a person can go asset by asset with one OK each, or stop with Approve.
-- The chain stays one-off: each asset is its own Assets row (versioned as before) and never starts, joins or moves a POC run; the full loop is only `/poc-studio:start`.
+- The chain stays one-off: each asset is its own Assets row (versioned as before) and never starts, joins or moves a POC run; the full loop is only `/poc-studio-uat:start`.
 
 ## 1.26.0
 - **New stage 2b · Wireframes** in the Plan phase, between the BRD and the design system (skill `wireframes`). From the approved scoping document it writes a short JSON layout spec; a bundled script (`render.py`, Pillow only, no browser, fonts included) draws one low-fidelity grey frame per page at the persona's width, a PDF of all frames, and `wireframe-manifest.json`: every component with its pages, CMP IDs, variants and states. Generic regions are **slots** that only name their component; the page's defining parts are drawn in detail with the BRD's real copy. `coverage.py` checks every §11 page and §23 CMP ID against the BRD. It has its own approval step inside G2 (Orbit: a `wireframes` document under Plan, M1w/M2w; no new gate).
@@ -126,15 +126,15 @@ Four stage skills updated together; they are one chain (the BRD feeds the wirefr
 - **Design system (v10.1):** with approved wireframes, the manifest is the component inventory (variants still capped at three per family), the frames are the layouts in `#build-plan`, the five screens are frames at high fidelity, nothing is proposed; the baseline (sign-in, statuses, empty/error/loading/no-access, toast, confirm, input states, both themes) is always built. Without wireframes it works as before.
 - **Build:** the frames and manifest go in the build request; platform-master flags a page whose layout differs from its frame.
 - **AI PM:** new `wireframes` lens and lesson stage; the design-system and 4b reviews check against the frames.
-- **One asset:** `/poc-studio:wireframes <Client> | <Use case>`; `/poc-studio:design` takes approved wireframes when the folder has them.
+- **One asset:** `/poc-studio-uat:wireframes <Client> | <Use case>`; `/poc-studio-uat:design` takes approved wireframes when the folder has them.
 - Runs started before 1.26 resume without wireframes when their design system has already started.
 
 ## 1.25.1
-- Removed `/poc-studio:research-report`. Research is not a stage of the POC journey, so it is no longer made as a one-off asset: the command, its `asset-run` row and section, the one-off Orbit `research` document type and its README rows are gone. The one-asset commands are now `requirements`, `brd`, `design`, `app` and `collaterals`. The `research` skill stays: the stages and the AI PM still call it for outside facts. The full pipeline (`/poc-studio:start`) is unchanged.
+- Removed `/poc-studio-uat:research-report`. Research is not a stage of the POC journey, so it is no longer made as a one-off asset: the command, its `asset-run` row and section, the one-off Orbit `research` document type and its README rows are gone. The one-asset commands are now `requirements`, `brd`, `design`, `app` and `collaterals`. The `research` skill stays: the stages and the AI PM still call it for outside facts. The full pipeline (`/poc-studio-uat:start`) is unchanged.
 
 ## 1.25.0
-- **Make one asset**: six new commands — `/poc-studio:requirements`, `research-report`, `brd`, `design`, `app`, `collaterals` — each makes one asset without a POC and without the other stages. Prerequisites are collected in the chat first (arguments → an existing client folder → one question); then the existing stage skill runs unattended, the AI PM reviews it, and the new `asset-run` skill writes it to Orbit as a one-off document (`origin: standalone`, shown in POC Build Loop under Assets), versioned from Orbit on every re-run or change, and asks for approval. Collaterals always ask which to make (demo script, deck, video — any of them). A one-off run never changes a pipeline run's files, state or Orbit rows.
-- orbit-writeback: "One-off documents" section and a shared Preview link rule; pipeline Document rows now also send `origin: pipeline`, `client_name` and `use_case`, and app documents save the preview link (never the matrix URL). `/poc-studio:feedback` in a one-off workspace asks for a POC ID or writes nothing.
+- **Make one asset**: six new commands — `/poc-studio-uat:requirements`, `research-report`, `brd`, `design`, `app`, `collaterals` — each makes one asset without a POC and without the other stages. Prerequisites are collected in the chat first (arguments → an existing client folder → one question); then the existing stage skill runs unattended, the AI PM reviews it, and the new `asset-run` skill writes it to Orbit as a one-off document (`origin: standalone`, shown in POC Build Loop under Assets), versioned from Orbit on every re-run or change, and asks for approval. Collaterals always ask which to make (demo script, deck, video — any of them). A one-off run never changes a pipeline run's files, state or Orbit rows.
+- orbit-writeback: "One-off documents" section and a shared Preview link rule; pipeline Document rows now also send `origin: pipeline`, `client_name` and `use_case`, and app documents save the preview link (never the matrix URL). `/poc-studio-uat:feedback` in a one-off workspace asks for a POC ID or writes nothing.
 - `scripts/release.sh` bumps the version in every command file.
 
 ## 1.24.0
@@ -186,7 +186,7 @@ Four stage skills updated together; they are one chain (the BRD feeds the wirefr
 - Scoping: brand guidelines found by web research when the client gives none (guidelines → live product → website), recorded as evidence with source type, light/dark balance and chromatic role; never promote a link/accent blue for a black-led brand; never ask about colours or theme in open questions; the design-system skill decides the palette and theme.
 
 ## 1.13.1
-- /poc-studio:feedback rows carry a `skill` field (the skill or agent the feedback is about, or `general`), and the reply names it.
+- /poc-studio-uat:feedback rows carry a `skill` field (the skill or agent the feedback is about, or `general`), and the reply names it.
 
 ## 1.13.0
 - Requirement Gathering: required Personas and journeys table; Stage-1 UX decisions (primary persona, device per persona, reuse vs rebuild) with source or stated default; checklist re-weighted to 12 items (personas and journeys = 25 points); Slack file retries cut to 2.
@@ -207,4 +207,4 @@ Four stage skills updated together; they are one chain (the BRD feeds the wirefr
 - Build stage: Nebula tests every page, automation, AI agent and the demo storyline, fixes what fails (max 3 rounds per item), then publishes; results in `04-build/test-report.md` and the G3 summary.
 
 ## 1.10.2
-- /feedback records POC-level feedback in Orbit for skill analysis (`/poc-studio:feedback <text>`, row in `orbit_studio_feedback`).
+- /feedback records POC-level feedback in Orbit for skill analysis (`/poc-studio-uat:feedback <text>`, row in `orbit_studio_feedback`).

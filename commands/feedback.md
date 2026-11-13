@@ -20,7 +20,7 @@ LOADED="1.42.3"
 python3 - "$LOADED" <<'PY'
 import json, subprocess, sys, urllib.request
 loaded = sys.argv[1]
-url = "https://raw.githubusercontent.com/shubhankargarg-lang/poc-studio/main/.claude-plugin/plugin.json"
+url = "https://raw.githubusercontent.com/shubhankargarg-lang/poc-studio-uat/main/.claude-plugin/plugin.json"
 try:
     latest = json.load(urllib.request.urlopen(url, timeout=10))["version"]
 except Exception as e:
@@ -31,9 +31,9 @@ if v(latest) <= v(loaded):
 def run(*cmd):
     r = subprocess.run(cmd, capture_output=True, text=True)
     print("$", " ".join(cmd)); print((r.stdout + r.stderr).strip()); return r.returncode
-ok = run("claude", "plugin", "marketplace", "update", "unifyapps-poc") == 0
+ok = run("claude", "plugin", "marketplace", "update", "unifyapps-poc-uat") == 0
 for scope in ("user", "project", "local"):
-    if ok and run("claude", "plugin", "update", "poc-studio@unifyapps-poc", "-s", scope) == 0:
+    if ok and run("claude", "plugin", "update", "poc-studio-uat@unifyapps-poc-uat", "-s", scope) == 0:
         print(f"UPDATED {loaded} -> {latest}"); sys.exit(0)
 print(f"UPDATE_FAILED {loaded} -> {latest}")
 PY
@@ -45,17 +45,17 @@ Then act on the last line it printed:
 - **`UPDATED <old> -> <new>`** → the new version is on disk, but this session is still running the old one, and only
   the person can switch it. **Stop here and do not file the ticket.** Tell the person, in two lines:
   "POC Studio was updated from <old> to <new>. Type `/reload-plugins`, then run the same command again:
-  `/poc-studio:feedback $ARGUMENTS`".
+  `/poc-studio-uat:feedback $ARGUMENTS`".
 - **`UPDATE_FAILED` or `UPDATE_CHECK_FAILED`** (the update could not run, or GitHub could not be reached, for example
   an SSL error) → **stop here; do not continue on this version.** Tell the person, in these words, then wait:
   "POC Studio could not update itself. Please reinstall it (2 minutes):
   1. Type `/plugin` and press Enter.
   2. Click the **+** (Add) button at the top right.
   3. Choose **Manage marketplaces**.
-  4. Next to **unifyapps-poc**, click **Remove marketplace**.
-  5. Click **Add marketplace** and enter `shubhankargarg-lang/poc-studio`.
+  4. Next to **unifyapps-poc-uat**, click **Remove marketplace**.
+  5. Click **Add marketplace** and enter `shubhankargarg-lang/poc-studio-uat`.
   6. Find **POC Studio** and click **Add to computer**.
-  7. Open a **new chat** and run: `/poc-studio:feedback $ARGUMENTS`"
+  7. Open a **new chat** and run: `/poc-studio-uat:feedback $ARGUMENTS`"
   Only if the person says they have already done these steps and the check still fails, carry on, and say in one
   line which version you are continuing on.
 
@@ -65,10 +65,10 @@ version than the latest published one. A status check (`status FB-<n>`) is a rea
 ## Step 1 — file or read the ticket
 
 1. **Status check.** If the text above is `status FB-<n>`, `status <n>`, `fb <n>`, `FB-<n>` or just a number, it is a
-   read only: load the `orbit-writeback` skill (Skill tool: `poc-studio:orbit-writeback`), follow its
+   read only: load the `orbit-writeback` skill (Skill tool: `poc-studio-uat:orbit-writeback`), follow its
    **Ticket status** subsection under `/feedback`, and stop. Write nothing.
 2. If no feedback text was given above, ask for it in one short question ("What feedback should I file?") and wait.
-3. Load the `orbit-writeback` skill (Skill tool: `poc-studio:orbit-writeback`) and follow its **`/feedback`** section
+3. Load the `orbit-writeback` skill (Skill tool: `poc-studio-uat:orbit-writeback`) and follow its **`/feedback`** section
    exactly. It uses the same UnifyApps Headless tenant tools and the same write rules as every other Orbit write: one
    ticket on `orbit_studio_feedback`, built with its `feedback_ticket.py` builder (full shape: `ticket_key` =
    `ticket_no`, status `to_be_assigned`, priority `none`, `updated_at` = `created_at`), then one `created` row on

@@ -16,7 +16,7 @@ ORBIT_DIR="<orbit_folder>"
 UA="$(ls -d ~/.claude/plugins/cache/unifyapps-headless/ua/*/ | sort -V | tail -1)scripts"
 orbit() { (cd "$ORBIT_DIR" && node "$UA/tool-calls.mjs" "$@"); }
 2. The POC id
-The build starts with /poc-studio:start <Client> | <Use case> | <poc_id>.
+The build starts with /poc-studio-uat:start <Client> | <Use case> | <poc_id>.
 
 Third part present → that is poc_id.
 Missing → find it:

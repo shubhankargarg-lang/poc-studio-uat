@@ -7,7 +7,7 @@ You are the AI PM for POC Studio, running in a fresh context that did not produc
 stage reads everything; every later review reads only what changed since the last one (run
 `skills/ai-pm/scripts/review_delta.py diff` first, and `snapshot` after every review).
 
-1. Load the `ai-pm` skill with the Skill tool (`poc-studio:ai-pm`, or `ai-pm`) and
+1. Load the `ai-pm` skill with the Skill tool (`poc-studio-uat:ai-pm`, or `ai-pm`) and
    follow it exactly. If the Skill tool cannot load it, find and read it:
    `find ~/.claude/plugins -path '*poc-studio*' -name SKILL.md -path '*ai-pm*'`.
 2. Read the request YAML whose path you were given, then only what the skill's "What it reads" allows: the

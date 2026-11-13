@@ -1,6 +1,6 @@
 ---
 name: poc-orchestrator
-description: Runs the UnifyApps POC Studio pipeline end to end for one client use case — Requirement Gathering → Connector discovery → Scoping → Wireframes → Design System → UnifyApps Headless build → Collaterals — with the AI PM checking every stage and answering every clarification question, an approval gate after each stage, and every file saved in the local client folder. Use when someone runs /poc-studio:start, says "start a POC for a client", or asks to resume a POC Studio run.
+description: Runs the UnifyApps POC Studio pipeline end to end for one client use case — Requirement Gathering → Connector discovery → Scoping → Wireframes → Design System → UnifyApps Headless build → Collaterals — with the AI PM checking every stage and answering every clarification question, an approval gate after each stage, and every file saved in the local client folder. Use when someone runs /poc-studio-uat:start, says "start a POC for a client", or asks to resume a POC Studio run.
 ---
 
 # POC Studio orchestrator
@@ -25,7 +25,7 @@ Start → 0 Setup → 1 Requirement Gathering → 1c Connector discovery → 2 S
 ```
 
 **Input — three values, all required:** the client name, the use case name and the **POC ID**, from
-`/poc-studio:start <client> | <use case> | <POC ID>` (e.g. `/poc-studio:start Acme | Invoice matching | POC-acme-20261018`).
+`/poc-studio-uat:start <client> | <use case> | <POC ID>` (e.g. `/poc-studio-uat:start Acme | Invoice matching | POC-acme-20261018`).
 If a separator is missing, read the arguments sensibly; if any value is missing, ask once for the missing ones.
 Everything else — website, personas, scope — comes from the documents the stages produce.
 
@@ -35,7 +35,7 @@ starts with `POC-` and ends with an 8-digit date. If what was given does not mat
 the person to confirm or correct it before starting. Use the POC ID exactly as given (same case) everywhere.
 
 **The POC ID must exist in Orbit, and Orbit is kept in step with the run.** The `orbit-writeback` skill (load it
-with the Skill tool, `poc-studio:orbit-writeback`) owns everything written to Orbit · POC Studio. The start command runs
+with the Skill tool, `poc-studio-uat:orbit-writeback`) owns everything written to Orbit · POC Studio. The start command runs
 its Setup (UnifyApps Headless's tenant tools, POC ID check against `orbit_studio_poc`, the POC owner's name and email) before this skill;
 if that has not happened in this session, run it first — not found → stop and ask the person to check the POC ID.
 Then call it at every write-back moment listed under "Orbit write-back at each gate" below.
@@ -50,7 +50,7 @@ channels, email threads and Drive folders mix them. Every stage works on **this*
 
 ## The skills you call
 
-Call each with the Skill tool. Use the plugin-qualified name the session lists (e.g. `poc-studio:scoping-l1-first`);
+Call each with the Skill tool. Use the plugin-qualified name the session lists (e.g. `poc-studio-uat:scoping-l1-first`);
 if a same-named skill exists from elsewhere, prefer the `poc-studio:` one.
 
 | Stage | Skill |
@@ -267,7 +267,7 @@ Gathering's `SAMPLE_UPLOAD:` question (real samples of the documents an AI featu
 ## Calling the reviewer
 
 The reviewer must not be the session that wrote the work, so run it as a subagent: the Agent tool with
-`subagent_type` `poc-studio:ai-pm` (or the name the session lists for the `ai-pm` agent). If that
+`subagent_type` `poc-studio-uat:ai-pm` (or the name the session lists for the `ai-pm` agent). If that
 agent type is unavailable, use a general-purpose subagent and tell it to load the `ai-pm` skill first.
 
 Write the request to `<workspace>/reviews/<stage>-<mode>-<n>.request.yaml` and pass its path in the prompt:
@@ -463,7 +463,7 @@ except at the start (the POC ID must be verified).
      Drive for desktop into the company shared drive `POC Studio Video Library` (or, on the fallback route, the
      person's `POC Studio` Drive folder).
 4. **Tools, now, in the background** (so the collateral stage is never blocked hours later, and nobody waits).
-   - **Mac:** load the `poc-collateral-setup` skill (Skill tool: `poc-studio:poc-collateral-setup`) and follow it:
+   - **Mac:** load the `poc-collateral-setup` skill (Skill tool: `poc-studio-uat:poc-collateral-setup`) and follow it:
      if its doctor already passes, say so in one line; otherwise start its `setup.sh` **in the background** (about
      1 GB the first time, into the person's own folders, no admin, no Homebrew, no password) and go straight on to
      Stage 1. When it finishes, log the result; if a step still fails after one re-run, say in one line which tool
@@ -516,7 +516,7 @@ except at the start (the POC ID must be verified).
 
 ## 1c · Connector discovery (every POC, before Scoping)
 
-After G1 is approved, call `connector-discovery` (Skill tool: `poc-studio:connector-discovery`) with the workspace, the
+After G1 is approved, call `connector-discovery` (Skill tool: `poc-studio-uat:connector-discovery`) with the workspace, the
 approved Requirement Gathering document, the run mode and the tenant. Both of its parts work through UnifyApps
 Headless (the client connection and the model tests), so call it first: if the UnifyApps Headless plugin (`ua`) is not
 installed, stop and ask the person to install it, then continue; run Stage 4 step 1 (`/ua:setup`) now, under the
@@ -566,7 +566,7 @@ Part of the Plan phase (G2), between the BRD and the design system: the BRD says
 do, the wireframes decide how each page works (its brief, pattern, layout, the signature, the navigation, the views),
 and the design system then designs those components, adding only what the journey needs (marked Added with a reason).
 
-- Create the autopilot file. Call `wireframes` (Skill tool: `poc-studio:wireframes`) with the client name, the use
+- Create the autopilot file. Call `wireframes` (Skill tool: `poc-studio-uat:wireframes`) with the client name, the use
   case, the approved `02-scoping/scoping-document.docx` and the output folder `<workspace>/02b-wireframes/`. It runs
   unattended: anything it cannot settle goes to the reviewer (resolve). Its research goes through `research`; copy
   each answer to `<workspace>/research/wireframes-<topic>.md`.
@@ -630,7 +630,7 @@ Only these session facts are supplied by you:
 ## 4 · Build with UnifyApps Headless
 
 - **Orbit:** M4 (stage `5_build`, if not already) when UnifyApps Headless starts.
-- Run Stage 4 in these steps (Skill tool names `ua:setup`, `poc-studio:platform-master`, `poc-studio:connector-discovery` and `ua:plan`, or whatever
+- Run Stage 4 in these steps (Skill tool names `ua:setup`, `poc-studio-uat:platform-master`, `poc-studio-uat:connector-discovery` and `ua:plan`, or whatever
   names the session lists for them). UnifyApps Headless updates itself when called; no update step is needed. If the UnifyApps Headless plugin
   (`ua`) is not installed, stop and tell the person to install UnifyApps Headless, then continue.
   1. **`/ua:setup`** — already done at stage 1c for this folder (reuse its solution id from `state.json`); run it here
@@ -638,7 +638,7 @@ Only these session facts are supplied by you:
      questions. It sets up this folder only: tenant `orbit.uat.unifyapps.com`, the person's sign-in, and a **new**
      solution named `<Client> — <Use case>` (see **Solution** below).
   2. **Platform pointers** — still under the autopilot file, load the `platform-master` skill (Skill tool:
-     `poc-studio:platform-master`) and run its job **1 · Pointers**: it classifies the use case from the approved
+     `poc-studio-uat:platform-master`) and run its job **1 · Pointers**: it classifies the use case from the approved
      scoping document and writes `04-build/platform-pointers.md`. Its pointers go into the build request below.
   2b. **Verify** — still under the autopilot file, run `connector-discovery` `scope: verify`: the client connection is
      still active, the read tests still pass and each operation resolves to its current version (when a client system
