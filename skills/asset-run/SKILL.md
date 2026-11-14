@@ -18,7 +18,7 @@ The full pipeline (`/poc-studio-uat:start`, `poc-orchestrator`) is not involved 
 | `app` | `/poc-studio-uat:app` | `ua:setup`, `platform-master`, `ua:plan` (Zen) — Stage 4 | `build` (Stage 4b) | `app` | `04-build/` |
 | `collaterals` | `/poc-studio-uat:collaterals` | `poc-collateral-studio` | `collaterals` | `demo_script`, `deck`, `video` (the ones chosen) | `05-collaterals/` |
 
-Load every skill with the Skill tool by its plugin name (`poc-studio:<skill>`). `R` below is the AI PM's scripts folder:
+Load every skill with the Skill tool by its plugin name (`poc-studio-uat:<skill>`). `R` below is the AI PM's scripts folder:
 `R=$(dirname "$(find ~/.claude/plugins -path '*ai-pm/scripts/lessons.py' | head -1)")`. On a Mac, every Bash command
 that runs `python3`, `node`, `ffmpeg`, `soffice` or `pandoc` starts with `source ~/.local/poc-collateral/env.sh && `
 once that file exists.
@@ -171,7 +171,12 @@ after the person asked for changes). A re-run always gets its own row before the
 Moment 7: "Re-runs always get their own row"; on a change request run `skill_run_row.py note-change <skill>` first).
 Every builder call takes `--ledger` with the run flag's folder (recorded in the run entry as `observability.ledger`).
 A failed write never holds the run: it stays pending and is sent again at the next step ("Nothing is lost"); at the
-approval, run the check against Orbit and end the closing message with the `skill_run_row.py report` line.
+approval, write one `poc-orchestrator` row "Run overhead" (`session_log.py slice poc-orchestrator`: the command's own
+work outside the skill runs), run the check against Orbit and end the closing message with the `skill_run_row.py
+report` line. Every row's tokens are the real usage from the session log (Moment 7, "Tokens"), and every row gets its
+session log (the slice removes secrets and real sample text itself; never leave a log out on purpose). Before every
+re-run done inline (REVISE fixes, or changes) run `session_log.py mark-start <skill>`; at the approval also run
+`skill_run_row.py no-log` and repair each listed row (Moment 7, "Retry, never drop").
 
 ## 3 · Run the stage (unattended)
 

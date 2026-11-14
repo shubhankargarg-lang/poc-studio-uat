@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.45.0
+- **Every skill run is logged, even when it read a real sample.** `session_log.py slice` now removes sample text itself (new `sample_redact.py`): each file in `files/samples/` is read (txt/csv/json/eml/html, docx/pptx/xlsx, pdf via pdftotext/pypdf), and any run of 6 matching words anywhere in the log becomes `[REDACTED: real sample <file>]`; a tool call that read a sample has its result replaced (this also catches samples that could not be extracted); base64 payloads are replaced. A final check sets `sample_text_left: false`; only such a slice may be uploaded. The old rule that left the log out when a sample was printed is gone.
+- **No overlapping rows or double-counted tokens.** A re-run done inline starts after the lines already claimed (and `session_log.py mark-start <skill>` is called before every inline re-run); a retried slice replaces its own earlier cut; the orchestrator's slice stops before a skill run still in progress; the builder refuses a log range that clashes with a saved row.
+- **Every row has a duration:** start and end come from the slice; the builder always sets `ended_at` and `duration_ms`.
+- **Repairs:** `skill_run_row.py no-log` lists rows without a log; `attach-log` updates only a row's log link/lines, end time/duration and real tokens; `session_log.py slice <skill> --lines A-B` cuts a past range. Retried at every moment, gate and the end of the run.
+- **No write-back is ever lost:** failed writes keep their payload in `.poc-studio-uat/outbox/` and are retried at every moment, gate, end of run, resume and the next command until saved; POC updates pass `expectedVersion` (fixes `VERSION_REQUIRED`); failed feedback tickets are retried too.
+- Requirement Gathering: a Slack `invalid_union` (-32602) error on a file is treated as refused at once; an identical copy from an earlier POC of the same client is a valid source.
+
+## 1.44.1
+- **Session logs are kept in full.** Nothing is cut any more (only sign-in secrets are removed). A log over the 20 MB upload limit is compressed (`.jsonl.gz`); only if it is still over 20 MB compressed are the longest texts cut, at the largest length that fits (200k, 50k, 20k, then 5k characters).
+
+## 1.44.0
+- **Real token usage on every Observability row, from the Claude Code session log.** `session_log.py slice` now adds up every AI call in the run's part of the log and in its helper agents' logs, each call once (Claude Code writes one call over several lines with the same usage; a call already counted for another row is skipped; a nested run's calls stay on its own row). Four figures per row: `tokens_new_in` (new text read), `tokens_cache_read` (history re-read), `tokens_out` (written) and `tokens_total`; `tokens_in` = new + re-read. The builder fills them with `--slice`; no more estimates unless the slice failed.
+- **The orchestrator's own work gets rows**: one `poc-orchestrator` row at each gate approval, at a stop or block, and at the end ("Orchestrator · G1" … "· end"; one-off runs: "Run overhead"), covering every line no skill run claimed (gate talk, write-backs, moving between stages). The rows of a chat now add up to the whole chat.
+
+## 1.43.0
+- **Every skill run now saves its full session log on its Observability row**, for debugging later. The hook notes where each logged skill (and each AI PM review) starts in the session's log; when the run returns, new `orbit-writeback/scripts/session_log.py slice` cuts out exactly that run (its part of the session plus the helper-agent logs started during it, a one-line marker for a nested run that has its own row), removes sign-in secrets (cookies, tokens, keys, passwords) and trims very long tool outputs. The file is uploaded with `upload_public_file` and saved on the `orbit_studio_skill_run` row as `session_log_link` and `session_log_lines`. A log that fails to cut or upload never holds up the row or the run.
+
 ## 1.42.3
 - **A failed update check no longer lets the run continue on an old copy.** When the update could not run or GitHub could not be reached (for example an SSL error), every command now stops and shows the person how to reinstall, step by step (in the app: /plugin → + → Manage marketplaces → remove and add the marketplace → add POC Studio to the computer → new chat), then run the same command again. Only if they say they already did this and the check still fails does the run continue, saying which version it is on.
 
@@ -50,7 +68,7 @@ Four stage skills updated together; they are one chain (the BRD feeds the wirefr
 ## 1.36.0
 - **Observability: every skill run is logged, including every re-run.** Re-runs after an AI PM REVISE or a change request were never logged (the hook only fires when a skill is first loaded), so the view jumped from "changes asked" to "approved". Now:
   - each re-run gets its own row before the review of it (label "<doc> v<N> · <k> fixes" or "· changes", round +1, `triggered_by` iteration for changes); the REVISE step, the gate's change step, 4c and asset-run say so where the re-run happens;
-  - `skill_run_row.py` keeps a local ledger (`.poc-studio/skill-runs/`) and refuses (exit 3) a review row whose run is not logged, or that comes after a REVISE or change request whose re-run has no row; `note-change` / `change-dropped` record change requests;
+  - `skill_run_row.py` keeps a local ledger (`.poc-studio-uat/skill-runs/`) and refuses (exit 3) a review row whose run is not logged, or that comes after a REVISE or change request whose re-run has no row; `note-change` / `change-dropped` record change requests;
   - the hook names any re-run with no row and any rows not yet saved when an AI PM review returns;
   - tokens are never empty: estimated from `files_read` / `files_written` when not measured;
   - outbox: a row that did not save stays pending and is sent again before every moment, at every gate and at the end (`pending`, `saved`); nothing is dropped after one retry any more;
@@ -81,7 +99,7 @@ Four stage skills updated together; they are one chain (the BRD feeds the wirefr
 
 ## 1.32.1
 - **Observability rows are built by a script, checked against the live `orbit_studio_skill_run` schema** (40 fields; `run_id`, `skill`, `started_at` required; schema validation on). `orbit-writeback/scripts/skill_run_row.py` turns loose values into the stored types and codes ("104k" → 104000, "v1" → 1, "REVISE" → `revise`, seconds → ms, `brd` → `scoping-l1-first`), drops empty values and unknown keys, never sends `poc` on a one-off row, and refuses a row it cannot make valid; the session sends its output as is.
-- **New hook `skill-run-log.sh`** (PreToolUse and PostToolUse on Skill and Agent): while a run's `.poc-studio/observability` flag exists, it saves each logged skill's start time and reminds the session to write the row when the skill returns (an AI PM review, right when it returns). Notify only; never blocks.
+- **New hook `skill-run-log.sh`** (PreToolUse and PostToolUse on Skill and Agent): while a run's `.poc-studio-uat/observability` flag exists, it saves each logged skill's start time and reminds the session to write the row when the skill returns (an AI PM review, right when it returns). Notify only; never blocks.
 - A refused row is retried once with only the failing part changed (new `run_id`, no `poc`, or without the named field), then noted in one line.
 
 ## 1.32.0
@@ -92,7 +110,7 @@ Four stage skills updated together; they are one chain (the BRD feeds the wirefr
 ## 1.31.0
 - **Run modes: Sonic or Zen**, asked once at the start of every run (`/poc-studio-uat:start` and each one-asset command) and kept in `state.json` → `mode` (a run without one is Zen). **Zen** is the loop as before. **Sonic**: the AI PM's final verdict is each gate (PASS, or the third review's rulings with nothing blocking), so the run moves to the next stage by itself; in Stage 4 the AI PM answers Zen planning's questions and approves its plan after platform-master's review and the builder check.
 - Still asked of the person in Sonic: sign-ins, every `CONFIRM_REQUIRED`, the AI PM's ASK_HUMAN items (credentials, real data, spend, sending or publishing outside Orbit UAT), a BLOCK after the third review, a Not ready requirements verdict, rebuilding pages already built, and a missing tool or connector.
-- Hooks read a new `.poc-studio/sonic` flag and route approval gates to the AI PM too. Orbit: Sonic approvals are written with `actor_type: ai` ("Approved by the AI PM (Sonic mode)") and no `slack_notification`. `lessons.py record … auto` logs Sonic approvals apart from human first-try approvals. One-off runs in Sonic approve the asset without asking and do not chain.
+- Hooks read a new `.poc-studio-uat/sonic` flag and route approval gates to the AI PM too. Orbit: Sonic approvals are written with `actor_type: ai` ("Approved by the AI PM (Sonic mode)") and no `slack_notification`. `lessons.py record … auto` logs Sonic approvals apart from human first-try approvals. One-off runs in Sonic approve the asset without asking and do not chain.
 
 ## 1.30.0
 - **Exact builder terms, so a POC app is never built as a no-code config app.** A build said "text-to-code" in its prose while Zen's task graph used no-code task kinds, so every page went to `app-agent` (`application-builder`). The plugin now names what actually decides the builder: the app, its pages and its publish use task kinds `code-app` / `code-publish`, owned by `code-app-agent` (`code-builder` tools); never `app`, `page-layout`, `page-bind`, `publish` or `app-agent`.

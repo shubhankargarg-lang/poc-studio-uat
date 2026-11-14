@@ -7,3 +7,9 @@ Starting point: live POC Studio **1.42.3** (commit `c2ff52c`), renamed to `poc-s
 | # | Date | Change | Commits | Tested | Moved to live |
 |---|---|---|---|---|---|
 | U-01 | 2026-11-13 | UAT keeps its run flags in `.poc-studio-uat/` (live keeps `.poc-studio/`), so with both plugins installed each plugin's hooks act only on its own runs. **UAT-only: never moved to live.** | see git log "UAT run flags" | Hooks checked both ways (question routing, stop reminder, Observability) | No (UAT-only) |
+
+## Syncs from live
+
+| Date | Live version | What |
+|---|---|---|
+| 2026-11-14 | 1.45.0 (commit `0f17a65`) | UAT brought level with live 1.42.3 → 1.45.0 (session logs, real tokens, orchestrator rows, sample redaction, no lost write-backs). Same transform as the first copy: `poc-studio-uat` names, `unifyapps-poc-uat`, the UAT repo URL, `.poc-studio-uat/` run folders (U-01). Also fixed 3 places the first copy had missed (`poc-studio:` → `poc-studio-uat:` in asset-run, poc-orchestrator and skill_run_row.py). |

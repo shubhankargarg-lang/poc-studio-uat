@@ -51,7 +51,7 @@ channels, email threads and Drive folders mix them. Every stage works on **this*
 ## The skills you call
 
 Call each with the Skill tool. Use the plugin-qualified name the session lists (e.g. `poc-studio-uat:scoping-l1-first`);
-if a same-named skill exists from elsewhere, prefer the `poc-studio:` one.
+if a same-named skill exists from elsewhere, prefer the `poc-studio-uat:` one.
 
 | Stage | Skill |
 |---|---|
@@ -371,6 +371,19 @@ step (the review, the gate); a re-run's row comes before the review of it. A fai
 it stays pending in the ledger and is sent again at the next step (orbit-writeback Moment 7, "Nothing is lost"). Not logged:
 orbit-writeback's own moments and the AI PM's resolve-mode answers.
 
+**Your own work gets rows too**, so the rows add up to the whole chat: at each gate approval (before the Orbit
+approval write), when the run stops or is blocked, and at the end of the run, write one `poc-orchestrator` row
+("Orchestrator · G<n>", "Orchestrator · stopped", "Orchestrator · end") from `session_log.py slice poc-orchestrator`:
+everything since your last row that no skill run claimed (gate talk, waiting, write-backs, moving between stages).
+Every row's tokens are the real usage from the session log (Moment 7, "Tokens"); never type them by hand.
+
+**Every row gets its session log** (Moment 7, "The session log"): the slice removes secrets and real sample text
+itself, so a run that read a sample is still logged; never leave a log out on purpose. **Before every re-run you do
+inline** (applying REVISE fix lines, or the person's changes, without loading the skill again) run
+`session_log.py mark-start <skill> --ledger <observability.ledger>`, so the re-run's log and tokens start where it
+starts. At every gate and at the end, also run `skill_run_row.py no-log` and repair each listed row (Moment 7,
+"Retry, never drop"), and retry `failed_writes` (orbit-writeback "When a write fails").
+
 ## Orbit write-back at each gate
 
 Every gate is mirrored to Orbit by the `orbit-writeback` skill (its table "The plugin's gates → Orbit moments" is the
@@ -389,7 +402,7 @@ reference). Do the write **before** putting the gate to the person (posting) and
 | Person approves the Zen plan (Stage 4) | **M4a** — Activity "Zen plan approved" with the preview path and task count; stage stays `5_build` |
 | platform-master builds an asset by the browser fallback (Stage 4) | **M4b** — Activity "Asset built by fallback" with its type, name and id; stage stays `5_build` |
 | Run blocked (sign-in, tools, missing input) / stopped / resumed | **M6** |
-| Any logged skill run returns (stage skill, AI PM review, platform-master job, build, research), and the orchestrator's Setup | **M7** — one `orbit_studio_skill_run` row (see "Observability log") |
+| Any logged skill run returns (stage skill, AI PM review, platform-master job, build, research), the orchestrator's Setup, and the orchestrator's own work at each gate approval, stop and end | **M7** — one `orbit_studio_skill_run` row (see "Observability log") |
 
 `slack_notification: true` is sent only by M1 and M5 (when files are written or a new version is posted), and
 **never in Sonic** (orbit-writeback: "Sonic mode"). If a write
