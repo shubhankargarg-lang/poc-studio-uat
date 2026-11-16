@@ -13,3 +13,4 @@ Starting point: live POC Studio **1.42.3** (commit `c2ff52c`), renamed to `poc-s
 | Date | Live version | What |
 |---|---|---|
 | 2026-11-14 | 1.45.0 (commit `0f17a65`) | UAT brought level with live 1.42.3 → 1.45.0 (session logs, real tokens, orchestrator rows, sample redaction, no lost write-backs). Same transform as the first copy: `poc-studio-uat` names, `unifyapps-poc-uat`, the UAT repo URL, `.poc-studio-uat/` run folders (U-01). Also fixed 3 places the first copy had missed (`poc-studio:` → `poc-studio-uat:` in asset-run, poc-orchestrator and skill_run_row.py). |
+| 2026-11-16 | 1.48.0 (commit `767654a`) | UAT brought level with live 1.45.0 → 1.48.0: wireframes as one clickable HTML with slop rules and the new design system (1.46.0), gate feedback as context on iterations (1.47.0), the AI PM build walk fixes (1.48.0). Same transform: UAT names, the UAT repo URL, `.poc-studio-uat/` run folders. |
