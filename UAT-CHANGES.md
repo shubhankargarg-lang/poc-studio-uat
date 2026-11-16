@@ -18,3 +18,4 @@ Starting point: live POC Studio **1.42.3** (commit `c2ff52c`), renamed to `poc-s
 | 2026-11-16 | 1.49.2 (commit `8718019`) | UAT brought level with live 1.49.0 → 1.49.2: the leaner-BRD change removed completely, and no caps on solution content (workflows, vendors, research questions). |
 | 2026-11-16 | 1.49.3 (commit `fca5e84`) | Skills and tools load fresh at every use again (load-once removed). |
 | 2026-11-16 | 1.50.0 (commit `a815d28`) | Before-and-after feedback check from the AI PM's kept review screenshots (local only). |
+| 2026-11-16 | 1.50.1 (commit `3b12c47`) | AI PM sizing follows the guide-not-cap rule, seed lessons refresh on every run, stale waiting flag ignored. |
