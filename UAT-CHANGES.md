@@ -20,3 +20,4 @@ Starting point: live POC Studio **1.42.3** (commit `c2ff52c`), renamed to `poc-s
 | 2026-11-16 | 1.50.0 (commit `a815d28`) | Before-and-after feedback check from the AI PM's kept review screenshots (local only). |
 | 2026-11-16 | 1.50.1 (commit `3b12c47`) | AI PM sizing follows the guide-not-cap rule, seed lessons refresh on every run, stale waiting flag ignored. |
 | 2026-11-16 | 1.50.2 (commit `89826ae`) | 14 rules from the POC Build Loop skill proposals, added on the current skills. |
+| 2026-11-17 | 1.51.0 (commit `d931c43`) | Anti-slop rules inside every skill's writing step (shared `references/anti-slop.md`, per-skill Quality rules, AI PM slop section 6). |
